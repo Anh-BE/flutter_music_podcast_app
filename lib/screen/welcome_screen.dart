@@ -1,0 +1,307 @@
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../colors/app_colors.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+class WelcomeScreen extends StatefulWidget {
+  const WelcomeScreen({super.key});
+
+  @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+
+}
+class _WelcomeScreenState extends State<WelcomeScreen> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+             // Màu đen mờ ở dưới đáy để tạo chiều sâu
+              AppColors.primary,
+              AppColors.background, // Màu đen mờ ở dưới đáy để tạo chiều sâu
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+            child: Column(
+              //mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                
+                
+                // Phần Logo và Tên App (Xếp ngang)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.1),
+                      ),
+                      child: const FaIcon(
+                        FontAwesomeIcons.spotify,
+                        color: Color.fromARGB(255, 116, 2, 142),
+                        size: 60, // Giảm kích thước xuống một chút để xếp ngang cho cân đối
+                      ),
+                    ),
+                    const SizedBox(width: 16), // Khoảng cách ngang giữa Logo và Chữ
+                    const Text(
+                      "Music APP",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                  ],
+                ),
+                
+             
+                const SizedBox(height : 20),
+                // Phần Tiêu đề và Mô tả
+                const Text(
+                  "Your Music,\nEverywhere",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 36,
+                    fontWeight: FontWeight.w800,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  "Stream unlimited songs, create playlists, and discover new music.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white54,
+                    fontSize: 16,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 48),
+                Row(
+                  
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start, // Giúp các icon luôn canh bằng nhau ở mép trên
+                  children: [
+                    // Cụm Icon Music + Text
+                    SizedBox(
+                      width: 145, // Cố định chiều rộng để các icon cân bằng nhau
+                      child: Column(
+                        children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: PhosphorIcon(
+                            PhosphorIconsFill.musicNote,
+                            color: AppColors.button,
+                            size: 45,
+                          ),
+                        ),
+                        const SizedBox(height: 8), // Khoảng cách giữa icon và chữ
+                        const Text(
+                          "Unlimited Music", 
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppColors.textWhite,
+                            fontSize: 15,
+                          ),
+                        ),
+                        const Text(
+                          "Stream milions of songs",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color:Colors.white54,
+                            fontSize : 13,
+                            
+                            
+                          ),
+                        ),
+                      ],
+                    ),
+                    ),
+                    const SizedBox(width: 20), // Khoảng cách vừa phải giữa 2 cột
+                    // Cụm Icon Headphones
+                    SizedBox(
+                      width: 145, // Cố định chiều rộng
+                      child: Column(
+                        children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: PhosphorIcon(
+                            PhosphorIconsFill.headphones,
+                            size: 45,
+                            color: AppColors.button,
+                          ),
+                        ),
+                        const SizedBox(height: 8), 
+                      const Text(
+                          "High Quality", // Đã sửa lỗi chính tả từ Unlimitted
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppColors.textWhite,
+                            fontSize: 15,
+                          ),
+                        ),
+                        const Text(
+                          "Crystal clear audio",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color:Colors.white54,
+                            fontSize : 13,
+                            
+                            
+                          ),
+                        ),
+                        // Sau này bạn có thể thêm một thẻ Text() vào đây tương tự như bên trên
+                      ],
+                    
+                      ),
+                    ),
+                  ],
+                ),
+                /// 2 nut ngang con lai 
+                const SizedBox(height : 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start, // Giúp các icon luôn canh bằng nhau ở mép trên
+                  children: [
+                    // Cụm Icon trai tim 
+                    SizedBox(
+                      width: 145, // Cố định chiều rộng
+                      child: Column(
+                        children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: PhosphorIcon(
+                            PhosphorIconsFill.heartStraight,
+                            color: AppColors.button,
+                            size: 45,
+                          ),
+                        ),
+                        const SizedBox(height: 8), // Khoảng cách giữa icon và chữ
+                        const Text(
+                          "Your Favorites", // Đã sửa lỗi chính tả từ Unlimitted
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppColors.textWhite,
+                            fontSize: 15,
+                          ),
+                        ),
+                        const Text(
+                          "Create custom playlists",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color:Colors.white54,
+                            fontSize : 13,
+                            
+                            
+                          ),
+                        ),
+                      ],
+                    ),
+                    ),
+                    const SizedBox(width: 20), // Khoảng cách vừa phải giữa 2 cột
+                    // Cụm Icon chia se
+                    SizedBox(
+                      width: 145, // Cố định chiều rộng
+                      child: Column(
+                        children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: PhosphorIcon(
+                            PhosphorIconsFill.shareNetwork,
+                            size: 45,
+                            color: AppColors.button,
+                          ),
+                        ),
+                      const SizedBox(height: 10),
+                      const Text(
+                          "Share & Discover", // Đã sửa lỗi chính tả từ Unlimitted
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppColors.textWhite,
+                            fontSize: 15,
+                          ),
+                        ),
+                      
+
+                        const Text(
+                          "Connect with friends",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color:Colors.white54,
+                            fontSize : 13,
+                            
+                            
+                          ),
+                        ),
+                        
+                      ],
+                    
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const Spacer(),
+               
+                // Nút Bắt đầu (Get Started)
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Xử lý chuyển trang ở đây
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.button,
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      "Get Started",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
