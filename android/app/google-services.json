@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "31128110453",
+    "project_id": "amnhac-e87b0",
+    "storage_bucket": "amnhac-e87b0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:31128110453:android:26df14aa1853d5bf40ff3c",
+        "android_client_info": {
+          "package_name": "com.huit.group8.music_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSfvME2oEBinPrXgn4TnTqamAUUiF4K4Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

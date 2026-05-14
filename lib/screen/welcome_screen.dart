@@ -21,9 +21,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-             // Màu đen mờ ở dưới đáy để tạo chiều sâu
               AppColors.primary,
-              AppColors.background, // Màu đen mờ ở dưới đáy để tạo chiều sâu
+            AppColors.background,
             ],
           ),
         ),
@@ -49,10 +48,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       child: const FaIcon(
                         FontAwesomeIcons.spotify,
                         color: Color.fromARGB(255, 116, 2, 142),
-                        size: 60, // Giảm kích thước xuống một chút để xếp ngang cho cân đối
+                      size: 60,
                       ),
                     ),
-                    const SizedBox(width: 16), // Khoảng cách ngang giữa Logo và Chữ
+                  const SizedBox(width: 16),
                     const Text(
                       "Music APP",
                       style: TextStyle(
@@ -92,7 +91,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 Row(
                   
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start, // Giúp các icon luôn canh bằng nhau ở mép trên
+                  crossAxisAlignment: CrossAxisAlignment.start, 
                   children: [
                     // Cụm Icon Music + Text
                     SizedBox(
@@ -111,7 +110,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             size: 45,
                           ),
                         ),
-                        const SizedBox(height: 8), // Khoảng cách giữa icon và chữ
+                      const SizedBox(height: 8),
                         const Text(
                           "Unlimited Music", 
                           textAlign: TextAlign.center,
@@ -133,10 +132,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ],
                     ),
                     ),
-                    const SizedBox(width: 20), // Khoảng cách vừa phải giữa 2 cột
-                    // Cụm Icon Headphones
+                  const SizedBox(width: 20),
                     SizedBox(
-                      width: 145, // Cố định chiều rộng
+                    width: 145,
                       child: Column(
                         children: [
                         Container(
@@ -151,9 +149,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             color: AppColors.button,
                           ),
                         ),
-                        const SizedBox(height: 8), 
+                      const SizedBox(height: 8),
                       const Text(
-                          "High Quality", // Đã sửa lỗi chính tả từ Unlimitted
+                        "High Quality",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: AppColors.textWhite,
@@ -200,9 +198,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             size: 45,
                           ),
                         ),
-                        const SizedBox(height: 8), // Khoảng cách giữa icon và chữ
+                      const SizedBox(height: 8),
                         const Text(
-                          "Your Favorites", // Đã sửa lỗi chính tả từ Unlimitted
+                        "Your Favorites",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: AppColors.textWhite,
@@ -222,10 +220,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ],
                     ),
                     ),
-                    const SizedBox(width: 20), // Khoảng cách vừa phải giữa 2 cột
-                    // Cụm Icon chia se
+                  const SizedBox(width: 20),
                     SizedBox(
-                      width: 145, // Cố định chiều rộng
+                    width: 145,
                       child: Column(
                         children: [
                         Container(
@@ -242,7 +239,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                       const SizedBox(height: 10),
                       const Text(
-                          "Share & Discover", // Đã sửa lỗi chính tả từ Unlimitted
+                        "Share & Discover",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: AppColors.textWhite,
