@@ -5,7 +5,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:music_app/models/models_music.dart';
 class AudioPlayerManager {
   AudioPlayerManager({required this.songURL}); 
-  final String songURL;
+  String songURL;
   final player = AudioPlayer();
   late Stream<DurationState> durationState;
 
@@ -19,6 +19,11 @@ class AudioPlayerManager {
         buffered: playbackEvent.bufferedPosition,
         total: playbackEvent.duration));
     player.setUrl(songURL);
+  }
+  void updateSongUrl(String url){
+    songURL = url;
+    init();
+
   }
 }
 class DurationState{
