@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../colors/app_colors.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'main_screen.dart';
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
@@ -274,7 +275,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   height: 56,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Xử lý chuyển trang ở đây
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MainScreen()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.button,

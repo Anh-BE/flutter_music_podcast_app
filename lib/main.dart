@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screen/welcome_screen.dart';
 import 'screen/list_songs_screen .dart';
 import 'screen/play_song.dart';
+import 'screen/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ListSongsScreen(),
+      home: MainScreen(),
     );
   }
 }
