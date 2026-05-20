@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/supabase_service.dart';
+import '../models/Supabase_Service.dart';
 import '../models/models_music.dart';
 
 class ListPodcastScreen extends StatelessWidget {

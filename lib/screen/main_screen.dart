@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'list_songs_screen .dart'; // Đã xóa khoảng trắng thừa ở đây
 import 'search_screen.dart';
 import 'list_podcards_screen.dart';
+import '../screen/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -29,6 +30,8 @@ class _MainScreenState extends State<MainScreen> {
         return const SearchScreen(); // Chỉ load khi chọn "Tìm kiếm"
       case 2:
         return ListPodcastScreen(); // Chỉ load khi chọn "PodCards" (Đã sửa đúng tên Class)
+      case 3:
+        return ProfileScreen();
       default:
         return ListSongsScreen();
     }
@@ -68,6 +71,7 @@ class _MainScreenState extends State<MainScreen> {
             BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Trang chủ'),
             BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Tìm kiếm'),
             BottomNavigationBarItem(icon: Icon(Icons.library_music_outlined), label: 'PodCards'),
+            BottomNavigationBarItem(icon: Icon(Icons.supervised_user_circle), label: 'Profile'),
           ],
         ),
       ),
