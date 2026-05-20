@@ -1,3 +1,4 @@
+
 class BaiHatModel{
     String title,artist,imageURl,audioURL,album;
     int id;
@@ -26,4 +27,37 @@ class BaiHatModel{
 
 
 }
+}
+class AlbumModel {
+  final int id;
+  final String title;
+  final String artistAlbum;
+  final String imageUrlAlbum;
+
+  AlbumModel({
+    required this.id,
+    required this.title,
+    required this.artistAlbum,
+    required this.imageUrlAlbum,
+  });
+
+  // Hàm chuyển đổi từ JSON (Supabase trả về) sang Object trong Flutter
+  factory AlbumModel.fromJson(Map<String, dynamic> json) {
+    return AlbumModel(
+      id: json['id'] as int,
+      title: json['title'] ?? 'Unknown Title',
+      artistAlbum: json['artist_album'] ?? 'Unknown Artist',
+      imageUrlAlbum: json['imageURl_album'] ?? 'https://your-placeholder-image-url.com', 
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'artist_album': artistAlbum,
+      'imageURl_album': imageUrlAlbum,
+    };
+  }
+
 }
