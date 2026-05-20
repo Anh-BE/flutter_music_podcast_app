@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'list_songs_screen .dart';
-import 'profile_screen.dart';
+import 'list_songs_screen .dart'; // Đã xóa khoảng trắng thừa ở đây
+import 'search_screen.dart';
+import 'list_podcards_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -12,17 +13,25 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [
-    ListSongsScreen(), 
-    const Center(child: Text('Tìm kiếm', style: TextStyle(color: Colors.white, fontSize: 24))), 
-    const Center(child: Text('Thư viện', style: TextStyle(color: Colors.white, fontSize: 24))),
-    const ProfileScreen()
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  // GIẢI PHÁP: Sử dụng hàm buildBody để lười tải (Lazy Loading)
+  // Chỉ khi bấm vào Tab nào, Flutter mới nhảy vào file đó để dịch và chạy.
+  Widget _buildBody(int index) {
+    switch (index) {
+      case 0:
+        return ListSongsScreen(); // Chỉ load khi chọn "Trang chủ"
+      case 1:
+        return const SearchScreen(); // Chỉ load khi chọn "Tìm kiếm"
+      case 2:
+        return ListPodcastScreen(); // Chỉ load khi chọn "PodCards" (Đã sửa đúng tên Class)
+      default:
+        return ListSongsScreen();
+    }
   }
 
   @override
@@ -35,11 +44,10 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           // 1. Giao diện chính của Tab chiếm hết khoảng trống còn lại
           Expanded(
-            child: _screens[_selectedIndex],
+            child: _buildBody(_selectedIndex), // Thay mảng cũ bằng hàm _buildBody ở đây
           ),
           
-          // 2. NƠI ĐẶT MINI-PLAYER (Thanh bài hát đang phát giống Spotify)
-          // Hiện tại làm tạm một container giả lập, sau này bạn thiết kế widget player vào đây
+          // 2. NƠI ĐẶT MINI-PLAYER (Thanh bài hát/podcast đang phát giống Spotify)
           
         ],
       ),
@@ -59,8 +67,7 @@ class _MainScreenState extends State<MainScreen> {
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Trang chủ'),
             BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Tìm kiếm'),
-            BottomNavigationBarItem(icon: Icon(Icons.library_music_outlined), label: 'Thư viện'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+            BottomNavigationBarItem(icon: Icon(Icons.library_music_outlined), label: 'PodCards'),
           ],
         ),
       ),
