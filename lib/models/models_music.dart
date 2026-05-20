@@ -1,3 +1,4 @@
+
 class BaiHatModel{
     String title,artist,imageURl,audioURL,album;
     int id;
@@ -58,4 +59,5 @@ class AlbumModel {
       'imageURl_album': imageUrlAlbum,
     };
   }
+
 }
