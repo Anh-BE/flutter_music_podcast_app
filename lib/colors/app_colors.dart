@@ -14,3 +14,4 @@ class AppColors {
 
   static const accent = Colors.greenAccent;
 }
+

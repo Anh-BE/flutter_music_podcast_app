@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'list_songs_screen .dart';
+import 'profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -14,7 +15,8 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     ListSongsScreen(), 
     const Center(child: Text('Tìm kiếm', style: TextStyle(color: Colors.white, fontSize: 24))), 
-    const Center(child: Text('Thư viện', style: TextStyle(color: Colors.white, fontSize: 24))), 
+    const Center(child: Text('Thư viện', style: TextStyle(color: Colors.white, fontSize: 24))),
+    const ProfileScreen()
   ];
 
   void _onItemTapped(int index) {
@@ -58,6 +60,7 @@ class _MainScreenState extends State<MainScreen> {
             BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Trang chủ'),
             BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Tìm kiếm'),
             BottomNavigationBarItem(icon: Icon(Icons.library_music_outlined), label: 'Thư viện'),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           ],
         ),
       ),

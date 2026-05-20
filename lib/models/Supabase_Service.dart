@@ -1,6 +1,7 @@
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/models_music.dart';
+import '../models/models_userProfileModel.dart';
 
 
 class SupabaseService {
@@ -29,4 +30,68 @@ class SupabaseService {
       .order('id')
       .map((data) => data.map((json) => BaiHatModel.fromMap(json)).toList());
 }
+
+
+
+// 1. Logic Đăng ký tài khoản mới
+  Future<String?> signUpWithEmail({
+    required String email,
+    required String password,
+    required String username,
+  }) async {
+    try {
+      final authResponse = await _supabase.auth.signUp(
+        email: email,
+        password: password,
+        // Đẩy tên người dùng vào dữ liệu siêu dữ liệu (metadata) để trigger tự bắt lấy
+        data: {'username': username},
+      );
+
+      if (authResponse.user != null) {
+        return null; // Thành công, không có lỗi
+      }
+      return 'Đăng ký thất bại, vui lòng thử lại';
+    } catch (e) {
+      return e.toString(); // Trả về chuỗi thông báo lỗi
+    }
+  }
+
+  // 2. Logic Đăng nhập hệ thống
+  Future<String?> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await _supabase.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      if (response.user != null) {
+        return null; // Đăng nhập thành công
+      }
+      return 'Sai tài khoản hoặc mật khẩu';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  // 3. Logic Đăng xuất
+  Future<void> signOut() async {
+    await _supabase.auth.signOut();
+  }
+
+  // 4. Luồng dữ liệu (Stream) lắng nghe thông tin tài khoản hiện tại
+  Stream<UserProfileModel?> get currentUserProfileStream {
+    final user = _supabase.auth.currentUser;
+    if (user == null) return Stream.value(null);
+
+    return _supabase
+        .from('profiles')
+        .stream(primaryKey: ['id'])
+        .eq('id', user.id)
+        .map((maps) {
+      if (maps.isEmpty) return null;
+      return UserProfileModel.fromJson(maps.first);
+    });
+  }
 }
