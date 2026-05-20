@@ -33,7 +33,7 @@ class SupabaseService {
 
 
 
-// 1. Logic Đăng ký tài khoản mới
+
   Future<String?> signUpWithEmail({
     required String email,
     required String password,
@@ -93,5 +93,13 @@ class SupabaseService {
       if (maps.isEmpty) return null;
       return UserProfileModel.fromJson(maps.first);
     });
+  }
+    Stream<List<PodcastModel>> getPodcardStream() {
+    return _supabase
+        .from('podcards')
+        .stream(primaryKey: ['id'])
+        .order('id')
+        .map((data) => data.map((json) => PodcastModel.fromJson(json)).toList());
+
   }
 }

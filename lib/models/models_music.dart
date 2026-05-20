@@ -62,4 +62,31 @@ class AlbumModel {
 
 }
 
+class PodcastModel {
+  final int id;
+  final String imagePodcardUrl;
+  final String linkPodcardUrl;
+  final int duration;
+  final String author;
+  final String title;
 
+  PodcastModel({
+    required this.id,
+    required this.imagePodcardUrl,
+    required this.linkPodcardUrl,
+    required this.duration,
+    required this.author,
+    required this.title,
+  });
+
+  factory PodcastModel.fromJson(Map<String, dynamic> json) {
+    return PodcastModel(
+      id: json['id'] as int,
+      imagePodcardUrl: json['image_podcard_URL'] as String? ?? '',
+      linkPodcardUrl: json['link_podcard_URL'] as String? ?? '',
+      duration: json['duration'] as int? ?? 0,
+      author: json['author'] as String? ?? 'Unknown',
+      title: json['title'] as String? ?? 'No Title',
+    );
+  }
+}
