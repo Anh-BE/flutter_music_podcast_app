@@ -39,9 +39,23 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
     _song = widget.Baihat;
     _audioPlayerManager = AudioPlayerManager(songURL: _song.audioURL);
     _audioPlayerManager.init();
+    _audioPlayerManager.player.playerStateStream.listen((playerState) {
+      final isCompleted = playerState.processingState == ProcessingState.completed;
+
+      if (isCompleted) {
+        if (_loopMode != LoopMode.one) {
+          _nextSong();
+        } else {
+          _audioPlayerManager.player.seek(Duration.zero);
+          _audioPlayerManager.player.play();
+        }
+      }
+    });
     _audioPlayerManager.player.play();
     _selectItemIndex = widget.ListBaihat.indexOf(widget.Baihat);
     _checkLikeStatus();
+
+
   }
 
   @override
@@ -222,14 +236,14 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
             size: 24,
           ),
           MediaButtonControl(
-            function: previousSong,
+            function: _previousSong,
             icon: Icons.skip_previous,
             color: Color.fromARGB(255, 247, 247, 248),
             size: 36,
           ),
           _playButton(),
           MediaButtonControl(
-            function: nextSong,
+            function: _nextSong,
             icon: Icons.skip_next,
             color: Color.fromARGB(255, 249, 249, 250),
             size: 36,
@@ -327,48 +341,45 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
     });
   }
 
-  void nextSong() {
-    if (_isShuffle) {
-      var random = Random();
-      _selectItemIndex = random.nextInt(widget.ListBaihat.length);
-    } else if (_selectItemIndex < widget.ListBaihat.length - 1) {
-      ++_selectItemIndex;
-    } else if (_loopMode == LoopMode.all &&
-        _selectItemIndex == widget.ListBaihat.length - 1) {
-      _selectItemIndex = 0;
-    }
 
-    if (_selectItemIndex >= widget.ListBaihat.length) {
-      _selectItemIndex = _selectItemIndex % widget.ListBaihat.length;
+  // Thêm async vào đầu hàm
+  void _nextSong() async {
+    if (widget.ListBaihat.isEmpty) return;
+
+    if (_isShuffle) {
+      // Nếu bật chế độ trộn bài, lấy ngẫu nhiên một index trong danh sách
+      _selectItemIndex = Random().nextInt(widget.ListBaihat.length);
+    } else {
+      // Chuyển sang bài tiếp theo, nếu hết danh sách thì quay lại bài đầu (vòng lặp danh sách)
+      _selectItemIndex = (_selectItemIndex + 1) % widget.ListBaihat.length;
     }
 
     final nextSong = widget.ListBaihat[_selectItemIndex];
-    _audioPlayerManager.updateSongUrl(nextSong.audioURL);
+
+    // 💡 SỬA TẠI ĐÂY: Phải có await để trình phát nạp xong hoàn toàn bài mới
+    await _audioPlayerManager.updateSongUrl(nextSong.audioURL);
+    _audioPlayerManager.player.play();
 
     setState(() {
       _song = nextSong;
     });
   }
 
-  void previousSong() {
+  // Thêm async vào đầu hàm
+  void _previousSong() async {
+    if (widget.ListBaihat.isEmpty) return;
+
     if (_isShuffle) {
-      var random = Random();
-
-      _selectItemIndex = random.nextInt(widget.ListBaihat.length);
-    } else if (_selectItemIndex > 0) {
-      _selectItemIndex--;
-    } else if (_loopMode == LoopMode.all && _selectItemIndex == 0) {
-      _selectItemIndex = widget.ListBaihat.length - 1;
-    }
-
-    if (_selectItemIndex < 0) {
-      _selectItemIndex = (-1 * _selectItemIndex) % widget.ListBaihat.length;
+      _selectItemIndex = Random().nextInt(widget.ListBaihat.length);
+    } else {
+      // Quay lại bài trước, nếu ở bài đầu tiên thì nhảy xuống bài cuối cùng
+      _selectItemIndex = (_selectItemIndex - 1 + widget.ListBaihat.length) % widget.ListBaihat.length;
     }
 
     final previousSong = widget.ListBaihat[_selectItemIndex];
 
-    _audioPlayerManager.updateSongUrl(previousSong.audioURL);
-
+    // 💡 SỬA TẠI ĐÂY: Thêm await để đồng bộ hóa luồng âm thanh lõi
+    await _audioPlayerManager.updateSongUrl(previousSong.audioURL);
     _audioPlayerManager.player.play();
 
     setState(() {

@@ -20,12 +20,24 @@ class AudioPlayerManager {
         total: playbackEvent.duration));
     player.setUrl(songURL);
   }
-  void updateSongUrl(String url){
-    songURL = url;
-    init();
-
+  // void updateSongUrl(String url){
+  //   songURL = url;
+  //   init();
+  //
+  // }
+  Future<void> updateSongUrl(String url) async {
+    try {
+      songURL = url;
+      await player.stop(); // Dừng triệt để bài cũ để giải phóng luồng âm thanh
+      await player.setUrl(url); // Nạp URL mới và đợi đệm xong
+    } catch (e) {
+      if (kDebugMode) {
+        print("Lỗi khi chuyển bài hát: $e");
+      }
+    }
   }
 }
+
 class DurationState{
   const DurationState({
     required this.progress,
