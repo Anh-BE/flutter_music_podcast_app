@@ -72,7 +72,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
                 child: Row(
                   children: [
-                    _buildCategoryChip(index: 0, label: 'Bài hát'),
+                    _buildCategoryChip(index: 0, label: 'Bài hát yêu thích'),
                     _buildCategoryChip(index: 1, label: 'Playlist'),
                     _buildCategoryChip(index: 2, label: 'Album'),
                   ],
