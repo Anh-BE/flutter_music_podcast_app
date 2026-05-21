@@ -2,10 +2,12 @@ class UserProfileModel {
   final String id;
   final String username;
   final String avatarUrl;
+  final String Role;
   final DateTime createdAt;
 
   UserProfileModel({
     required this.id,
+    required this.Role,
     required this.username,
     required this.avatarUrl,
     required this.createdAt,
@@ -18,6 +20,7 @@ class UserProfileModel {
       username: json['username'] as String? ?? 'Người dùng Musify',
       avatarUrl: json['avatar_url'] as String? ?? 'https://bwcygbzraxmilppnwxhg.supabase.co/storage/v1/object/public/music_assets/user-default.jpg',
       createdAt: DateTime.parse(json['created_at'] as String),
+      Role:json['Role'] as String
     );
   }
 }

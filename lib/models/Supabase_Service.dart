@@ -103,6 +103,7 @@ class SupabaseService {
         .map((data) => data.map((json) => PodCardModel.fromJson(json)).toList());
 
   }
+
 //logic yêu thích bài hát
 // Lấy ID của người dùng hiện tại đang đăng nhập hệ thống
   String? get currentUserId => _supabase.auth.currentUser?.id;
@@ -181,5 +182,34 @@ class SupabaseService {
   }
 
 
+
+
+
+  // --- CÁC HÀM DÀNH CHO ADMIN (CRUD BÀI HÁT) ---
+
+  // 1. Thêm bài hát
+  Future<void> addSong({required String title, required String artist, required String imageUrl, required String audioUrl, int? albumId, required int duration}) async {
+    await _supabase.from('songs').insert({
+      'title': title,
+      'artist': artist,
+      'imageURl': imageUrl,
+      'audioURL': audioUrl,
+      'album_id': albumId,
+      'duration': duration,
+    });
+  }
+
+  // 2. Xóa bài hát
+  Future<void> deleteSong(int id) async {
+    await _supabase.from('songs').delete().eq('id', id);
+  }
+
+  // 3. Cập nhật bài hát
+  Future<void> updateSong(int id, Map<String, dynamic> updates) async {
+    // Ví dụ updates: {'title': 'Tên mới', 'artist': 'Ca sĩ mới'}
+    await _supabase.from('songs').update(updates).eq('id', id);
+  }
+  
+  
 
 }
