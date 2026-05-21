@@ -39,6 +39,22 @@ class ProfileScreen extends StatelessWidget {
             return const Center(child: Text('Không tìm thấy thông tin hồ sơ', style: TextStyle(color: AppColors.textWhite)));
           }
 
+          // LỒNG FUTUREBUILDER: Để đồng bộ lấy thêm danh sách bài hát yêu thích
+          return FutureBuilder<Map<String, dynamic>?>(
+            future: supabaseService.getProfileWithLikedSongs(),
+            builder: (context, likedSnapshot) {
+              int likedSongsCount = 0;
+              List<dynamic> likedSongsList = [];
+
+              if (likedSnapshot.hasData && likedSnapshot.data != null) {
+                final likedSongsRaw = likedSnapshot.data!['liked_songs'] as List? ?? [];
+                likedSongsList = likedSongsRaw
+                    .map((item) => item['songs'] as Map<String, dynamic>?)
+                    .where((song) => song != null)
+                    .toList();
+                likedSongsCount = likedSongsList.length;
+              }
+
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
             child: Column(
@@ -84,11 +100,10 @@ class ProfileScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildStatItem('Thời gian nghe', '14h'),
+
+                      _buildStatItem('Playlists', '0'),
                       Container(width: 1, height: 35, color: Colors.white10),
-                      _buildStatItem('Playlists', '3'),
-                      Container(width: 1, height: 35, color: Colors.white10),
-                      _buildStatItem('Yêu thích', '24'),
+                      _buildStatItem('Yêu thích', '$likedSongsCount'),
                     ],
                   ),
                 ),
@@ -121,6 +136,8 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
+          );
+            },
           );
         },
       ),

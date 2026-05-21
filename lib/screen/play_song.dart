@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import '../models/Supabase_Service.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:music_app/models/models_music.dart';
@@ -29,6 +29,10 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
   bool _isShuffle = false;
   LoopMode _loopMode = LoopMode.off;
 
+  // Khởi tạo các biến cho chức năng yêu thích
+  final SupabaseService _supabaseService = SupabaseService();
+  bool _isLiked = false;
+
   @override
   void initState() {
     super.initState();
@@ -37,12 +41,37 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
     _audioPlayerManager.init();
     _audioPlayerManager.player.play();
     _selectItemIndex = widget.ListBaihat.indexOf(widget.Baihat);
+    _checkLikeStatus();
   }
 
   @override
   void dispose() {
     _audioPlayerManager.player.dispose();
     super.dispose();
+  }
+
+  // Hàm quét trạng thái thích từ Supabase
+  void _checkLikeStatus() async {
+    bool liked = await _supabaseService.isSongLiked(_song.id); // Giả định model của bạn dùng thuộc tính .id
+    if (mounted) {
+      setState(() {
+        _isLiked = liked;
+      });
+    }
+  }
+
+  // Hàm xử lý khi nhấn vào nút Tim
+  void _toggleLike() async {
+    try {
+      bool newStatus = await _supabaseService.toggleLikeSong(_song.id);
+      setState(() {
+        _isLiked = newStatus;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
   }
 
   Widget build(BuildContext context) {
@@ -81,6 +110,8 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                         color: const Color.fromARGB(255, 255, 255, 255),
                       ),
                     ),
+
+
                     IconButton(
                       onPressed: () => Navigator.pop(context),
                       icon: Icon(
@@ -108,24 +139,45 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                   ],
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 10, bottom: 10, left: 26),
+              Padding(padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: SizedBox(
                   width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween, // Đẩy chữ sang trái, nút trái tim sang phải
                     children: [
-                      Text(
-                        _song.title,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      // Khối chứa chữ nằm bên trái
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min, // Giúp cột co lại vừa vặn với nội dung chữ
+                          children: [
+                            Text(
+                              _song.title,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                              maxLines: 1, // Giới hạn 1 dòng nếu tên bài hát quá dài
+                              overflow: TextOverflow.ellipsis, // Hiển thị dấu ... nếu bị quá tải
+                            ),
+                            SizedBox(height: 4), // Khoảng cách nhỏ giữa tên bài hát và ca sĩ
+                            Text(
+                              _song.artist,
+                              style: TextStyle(fontSize: 13, color: Colors.white70),
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        _song.artist,
-                        style: TextStyle(fontSize: 13, color: Colors.white),
+
+                      // Nút trái tim nằm bên phải
+                      IconButton(
+                        onPressed: _toggleLike,
+                        icon: Icon(
+                          _isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: _isLiked ? Colors.redAccent : Colors.white,
+                          size: 28,
+                        ),
                       ),
                     ],
                   ),
@@ -190,6 +242,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                 : const Color.fromARGB(255, 245, 244, 247),
             size: 24,
           ),
+
         ],
       ),
     );

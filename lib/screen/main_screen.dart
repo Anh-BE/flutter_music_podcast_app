@@ -3,6 +3,7 @@ import 'list_songs_screen .dart'; // Đã xóa khoảng trắng thừa ở đây
 import 'search_screen.dart';
 import 'list_podcards_screen.dart';
 import '../screen/profile_screen.dart';
+import '../screen/library_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -32,6 +33,8 @@ class _MainScreenState extends State<MainScreen> {
         return ListPodcastScreen(); // Chỉ load khi chọn "PodCards" (Đã sửa đúng tên Class)
       case 3:
         return ProfileScreen();
+      case 4:
+        return const LibraryScreen();
       default:
         return ListSongsScreen();
     }
@@ -72,6 +75,7 @@ class _MainScreenState extends State<MainScreen> {
             BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Tìm kiếm'),
             BottomNavigationBarItem(icon: Icon(Icons.library_music_outlined), label: 'PodCards'),
             BottomNavigationBarItem(icon: Icon(Icons.supervised_user_circle), label: 'Profile'),
+            BottomNavigationBarItem(icon: Icon(Icons.audio_file_rounded), label: 'Library'),
           ],
         ),
       ),

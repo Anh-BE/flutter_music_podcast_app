@@ -7,6 +7,7 @@ import '../models/models_userProfileModel.dart';
 class SupabaseService {
   final _supabase = Supabase.instance.client;
 
+
   Stream<List<BaiHatModel>> getSongsStream() {
     return _supabase
         .from('songs')
@@ -102,4 +103,83 @@ class SupabaseService {
         .map((data) => data.map((json) => PodCardModel.fromJson(json)).toList());
 
   }
+//logic yêu thích bài hát
+// Lấy ID của người dùng hiện tại đang đăng nhập hệ thống
+  String? get currentUserId => _supabase.auth.currentUser?.id;
+  // 1. Kiểm tra xem bài hát cụ thể này đã được User này thích chưa
+  Future<bool> isSongLiked(dynamic songId) async {
+    final userId = currentUserId;
+    if (userId == null) return false;
+
+    try {
+      final response = await _supabase // Hết báo lỗi undefined
+          .from('liked_songs')
+          .select()
+          .eq('user_id', userId)
+          .eq('song_id', songId)
+          .maybeSingle();
+
+      return response != null;
+    } catch (e) {
+      print("Lỗi kiểm tra trạng thái tim: \$e");
+      return false;
+    }
+  }
+
+// 2. Xử lý Bấm Tim
+  Future<bool> toggleLikeSong(dynamic songId) async {
+    final userId = currentUserId;
+    if (userId == null) throw Exception("Vui lòng đăng nhập để thực hiện chức năng này");
+
+    final isLiked = await isSongLiked(songId);
+
+    try {
+      if (isLiked) {
+        await _supabase // Hết báo lỗi undefined
+            .from('liked_songs')
+            .delete()
+            .eq('user_id', userId)
+            .eq('song_id', songId);
+        return false;
+      } else {
+        await _supabase.from('liked_songs').insert({ // Hết báo lỗi undefined
+          'user_id': userId,
+          'song_id': songId,
+        });
+        return true;
+      }
+    } catch (e) {
+      print("Lỗi xử lý toggle like: \$e");
+      rethrow;
+    }
+  }
+  // 3. Lấy thông tin Profile kèm toàn bộ danh sách chi tiết bài hát đã thích
+  Future<Map<String, dynamic>?> getProfileWithLikedSongs() async {
+    final userId = currentUserId;
+    if (userId == null) return null;
+
+    try {
+      final response = await _supabase // Hết báo lỗi undefined
+          .from('profiles')
+          .select('''
+            id,
+            username,
+            avatar_url,
+            liked_songs (
+              created_at,
+              songs (*) 
+            )
+          ''')
+          .eq('id', userId)
+          .maybeSingle();
+
+      return response as Map<String, dynamic>?;
+    } catch (e) {
+      print("Lỗi lấy thông tin Profile và bài hát đã thích: \$e");
+      return null;
+    }
+  }
+
+
+
 }
