@@ -90,3 +90,18 @@ class PodCardModel {
     );
   }
 }
+class PlaylistModel {
+  final int id;
+  final String name;
+  final String userId;
+
+  PlaylistModel({required this.id, required this.name, required this.userId});
+
+  factory PlaylistModel.fromJson(Map<String, dynamic> json) {
+    return PlaylistModel(
+      id: json['id'] as int,
+      name: json['name'] ?? 'Playlist không tên',
+      userId: json['user_id'] ?? '',
+    );
+  }
+}

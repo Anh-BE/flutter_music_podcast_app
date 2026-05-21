@@ -4,6 +4,7 @@ import '../models/models_music.dart';
 import '../models/models_userProfileModel.dart';
 
 
+
 class SupabaseService {
   final _supabase = Supabase.instance.client;
 
@@ -209,7 +210,90 @@ class SupabaseService {
     // Ví dụ updates: {'title': 'Tên mới', 'artist': 'Ca sĩ mới'}
     await _supabase.from('songs').update(updates).eq('id', id);
   }
-  
-  
+
+
+
+//các logic chức năng playlist
+// 1. Luồng lắng nghe danh sách Playlist của User đang đăng nhập thời gian thực
+  Stream<List<PlaylistModel>> getMyPlaylistsStream() {
+    final user = _supabase.auth.currentUser;
+    if (user == null) return Stream.value([]);
+
+    return _supabase
+        .from('playlists')
+        .stream(primaryKey: ['id'])
+        .eq('user_id', user.id)
+        .order('created_at', ascending: false)
+        .map((data) => data.map((json) => PlaylistModel.fromJson(json)).toList());
+  }
+
+  // 2. Hàm tạo một Playlist trống mới
+  Future<String?> createPlaylist(String name) async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) return 'Bạn cần đăng nhập trước';
+
+      await _supabase.from('playlists').insert({
+        'name': name,
+        'user_id': user.id,
+      });
+      return null; // Trả về null tức là thành công
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  // 3. Hàm chèn bài hát được chọn vào Playlist chỉ định
+  Future<String?> addSongToPlaylist({required int playlistId, required int songId}) async {
+    try {
+      await _supabase.from('playlist_songs').insert({
+        'playlist_id': playlistId,
+        'song_id': songId,
+      });
+      return null;
+    } catch (e) {
+      if (e.toString().contains('duplicate key')) {
+        return 'Bài hát này đã tồn tại trong playlist!';
+      }
+      return 'Lỗi: Không thể thêm bài hát';
+    }
+  }
+
+// Lấy danh sách bài hát thuộc một Playlist cụ thể dựa vào playlistId
+  Future<List<BaiHatModel>> getSongsInPlaylist(int playlistId) async {
+    try {
+      // Thực hiện Join từ bảng playlist_songs sang bảng songs để lấy thông tin bài hát
+      final response = await _supabase
+          .from('playlist_songs')
+          .select('songs (*)') // Lấy tất cả các cột thuộc bảng songs liên kết
+          .eq('playlist_id', playlistId);
+
+      if (response == null) return [];
+
+      final data = response as List<dynamic>;
+
+      // Ánh xạ dữ liệu trả về thành danh sách BaiHatModel
+      return data.map((item) {
+        final songData = item['songs'] as Map<String, dynamic>;
+        return BaiHatModel.fromMap(songData);
+      }).toList();
+    } catch (e) {
+      print('Lỗi khi lấy bài hát trong playlist: $e');
+      return [];
+    }
+  }
+  // Hàm xóa một bài hát ra khỏi playlist dựa vào playlist_id và song_id
+  Future<String?> removeSongFromPlaylist({required int playlistId, required int songId}) async {
+    try {
+      await _supabase
+          .from('playlist_songs')
+          .delete()
+          .eq('playlist_id', playlistId)
+          .eq('song_id', songId);
+      return null; // Xóa thành công, không trả về lỗi
+    } catch (e) {
+      return e.toString();
+    }
+  }
 
 }

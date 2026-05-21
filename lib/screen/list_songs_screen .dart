@@ -1,14 +1,98 @@
 
 import 'package:flutter/material.dart';
-import '../models/supabase_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:music_app/colors/app_colors.dart';
+import '../models/Supabase_Service.dart';
 import '../models/models_music.dart';
+
 import 'play_song.dart';
 import 'album_songs_screen.dart';
 
 class ListSongsScreen extends StatelessWidget {
   final SupabaseService _service = SupabaseService();
   ListSongsScreen({super.key});
+
+  // Hàm hiển thị danh sách Playlist dưới đáy màn hình để người dùng thêm bài hát vào
+  void _showAddToPlaylistBottomSheet(BuildContext context, int songId) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1E1E1E),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  "Thêm vào Playlist",
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const Divider(color: Colors.white10, height: 1),
+              Flexible(
+                child: StreamBuilder<List<PlaylistModel>>(
+                  stream: _service.getMyPlaylistsStream(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator(color: Colors.purple)));
+                    }
+
+                    // Trường hợp CHƯA CÓ PLAYLIST NÀO
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Padding(
+                        padding: EdgeInsets.all(32.0),
+                        child: Center(
+                          child: Text(
+                            "Hiện chưa có playlist nào. Hãy tạo playlist ở tab Thư viện trước nhé!",
+                            textAlign:TextAlign.center,
+                            style: TextStyle(color: Colors.white60, fontSize: 14),
+                          ),
+                        ),
+                      );
+                    }
+
+                    final playlists = snapshot.data!;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: playlists.length,
+                      itemBuilder: (context, idx) {
+                        final playlist = playlists[idx];
+                        return ListTile(
+                          leading: const Icon(Icons.playlist_add_check, color: Colors.purpleAccent),
+                          title: Text(playlist.name, style: const TextStyle(color: Colors.white)),
+                          onTap: () async {
+                            Navigator.pop(context); // Đóng BottomSheet lại trước
+
+                            final error = await _service.addSongToPlaylist(
+                              playlistId: playlist.id,
+                              songId: songId,
+                            );
+
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(error ?? "Đã thêm bài hát vào playlist '${playlist.name}' thành công!"),
+                                  backgroundColor: error != null ? Colors.redAccent : Colors.green,
+                                ),
+                              );
+                            }
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,6 +282,13 @@ class ListSongsScreen extends StatelessWidget {
                               ),
                             );
                           },
+                          // NÚT MỞ RỘNG Ở ĐÂY
+                          trailing: IconButton(
+                            icon: const Icon(Icons.more_vert, color:AppColors.primary),
+                            onPressed: () {
+                              _showAddToPlaylistBottomSheet(context, item.id);
+                            },
+                          ),
                         ),
                       );
                     },
@@ -211,3 +302,5 @@ class ListSongsScreen extends StatelessWidget {
     );
   }
 }
+
+
