@@ -161,7 +161,7 @@ class ListSongsScreen extends StatelessWidget {
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: songs.length > 6 ? 6 : songs.length,
+                    itemCount: songs.length ,
                     itemBuilder: (context, index) {
                       final item = songs[index];
                       return Padding(

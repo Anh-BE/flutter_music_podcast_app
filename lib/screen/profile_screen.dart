@@ -34,6 +34,12 @@ class ProfileScreen extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator(color: AppColors.primary));
           }
+          
+          // Bắt lỗi và hiển thị nguyên nhân trực tiếp trên màn hình
+          if (snapshot.hasError) {
+            return Center(child: Text('Lỗi tải dữ liệu: ${snapshot.error}', style: const TextStyle(color: Colors.redAccent, fontSize: 16)));
+          }
+
           final profile = snapshot.data;
           if (profile == null) {
             return const Center(child: Text('Không tìm thấy thông tin hồ sơ', style: TextStyle(color: AppColors.textWhite)));

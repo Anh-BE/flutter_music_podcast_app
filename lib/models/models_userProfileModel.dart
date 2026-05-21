@@ -19,8 +19,8 @@ class UserProfileModel {
       id: json['id'] as String,
       username: json['username'] as String? ?? 'Người dùng Musify',
       avatarUrl: json['avatar_url'] as String? ?? 'https://bwcygbzraxmilppnwxhg.supabase.co/storage/v1/object/public/music_assets/user-default.jpg',
-      createdAt: DateTime.parse(json['created_at'] as String),
-      Role:json['Role'] as String
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'].toString()) : DateTime.now(),
+      Role: json['role']?.toString() ?? json['Role']?.toString() ?? 'User'
     );
   }
 }
