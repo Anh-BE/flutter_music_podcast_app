@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/Supabase_Service.dart';
 import '../models/models_music.dart';
+import 'play_podcast_screen.dart';
 
 class ListPodcastScreen extends StatelessWidget {
   final SupabaseService _service = SupabaseService();
@@ -37,7 +38,7 @@ class ListPodcastScreen extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: StreamBuilder<List<PodcastModel>>(
+                child: StreamBuilder<List<PodCardModel>>(
                   stream: _service.getPodcardStream(),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
@@ -65,7 +66,7 @@ class ListPodcastScreen extends StatelessWidget {
                       itemCount: podcasts.length,
                       itemBuilder: (context, index) {
                         final item = podcasts[index];
-                        return _buildPodcastBigCard(item);
+                        return _buildPodcastBigCard(context, item);
                       },
                     );
                   },
@@ -79,60 +80,71 @@ class ListPodcastScreen extends StatelessWidget {
   }
 
   // Hàm bổ trợ để vẽ Thẻ Podcast Lớn (Big Card) giống y chang ảnh mẫu
-  Widget _buildPodcastBigCard(PodcastModel item) {
+  Widget _buildPodcastBigCard(BuildContext context, PodCardModel item) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Khối ảnh/video lớn tỉ lệ 16:9
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                item.imagePodcardUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (c, e, s) => Container(
-                  color: Colors.grey[800],
-                  child: const Icon(Icons.podcasts, color: Colors.white, size: 50),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context, // Dùng context từ builder
+            MaterialPageRoute(
+              builder: (context) => PlayPodcastScreen(podcast: item),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Khối ảnh/video lớn tỉ lệ 16:9
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  item.imagePodcardUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (c, e, s) => Container(
+                    color: Colors.grey[800],
+                    child: const Icon(Icons.podcasts, color: Colors.white, size: 50),
+                  ),
                 ),
               ),
             ),
-          ),
-          // Hàng thông tin chi tiết phía dưới
-          ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: Image.network(
-                item.imagePodcardUrl,
-                width: 40,
-                height: 40,
-                fit: BoxFit.cover,
-                errorBuilder: (c, e, s) => Container(
+            // Hàng thông tin chi tiết phía dưới
+            ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: Image.network(
+                  item.imagePodcardUrl,
                   width: 40,
                   height: 40,
-                  color: Colors.grey[800],
-                  child: const Icon(Icons.music_note, color: Colors.white),
+                  fit: BoxFit.cover,
+                  errorBuilder: (c, e, s) => Container(
+                    width: 40,
+                    height: 40,
+                    color: Colors.grey[800],
+                    child: const Icon(Icons.music_note, color: Colors.white),
+                  ),
                 ),
               ),
+              title: Text(
+                item.title,
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              subtitle: Text(
+                '${item.author} • ${item.duration} giây',
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: const Icon(Icons.more_vert, color: Colors.grey),
             ),
-            title: Text(
-              item.title,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            subtitle: Text(
-              '${item.author} • ${item.duration} giây',
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            trailing: const Icon(Icons.more_vert, color: Colors.grey),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -94,12 +94,12 @@ class SupabaseService {
       return UserProfileModel.fromJson(maps.first);
     });
   }
-    Stream<List<PodcastModel>> getPodcardStream() {
+    Stream<List<PodCardModel>> getPodcardStream() {
     return _supabase
         .from('podcards')
         .stream(primaryKey: ['id'])
         .order('id')
-        .map((data) => data.map((json) => PodcastModel.fromJson(json)).toList());
+        .map((data) => data.map((json) => PodCardModel.fromJson(json)).toList());
 
   }
 }

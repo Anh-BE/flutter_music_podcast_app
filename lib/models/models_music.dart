@@ -62,7 +62,7 @@ class AlbumModel {
 
 }
 
-class PodcastModel {
+class PodCardModel {
   final int id;
   final String imagePodcardUrl;
   final String linkPodcardUrl;
@@ -70,7 +70,7 @@ class PodcastModel {
   final String author;
   final String title;
 
-  PodcastModel({
+  PodCardModel({
     required this.id,
     required this.imagePodcardUrl,
     required this.linkPodcardUrl,
@@ -79,8 +79,8 @@ class PodcastModel {
     required this.title,
   });
 
-  factory PodcastModel.fromJson(Map<String, dynamic> json) {
-    return PodcastModel(
+  factory PodCardModel.fromJson(Map<String, dynamic> json) {
+    return PodCardModel(
       id: json['id'] as int,
       imagePodcardUrl: json['image_podcard_URL'] as String? ?? '',
       linkPodcardUrl: json['link_podcard_URL'] as String? ?? '',
