@@ -55,7 +55,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       });
                     },
                     style: const TextStyle(color: Colors.white, fontSize: 16),
-                    cursorColor: const Color(0xFF1DB954), // Con trỏ chuột màu xanh Spotify
+                    cursorColor: const Color.fromARGB(255, 231, 233, 231), // Con trỏ chuột màu xanh Spotify
                     decoration: InputDecoration(
                       hintText: 'Bạn muốn nghe gì?',
                       hintStyle: const TextStyle(color: Colors.white54, fontSize: 16),

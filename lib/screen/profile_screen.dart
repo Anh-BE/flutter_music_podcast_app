@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../models/Supabase_Service.dart';
 import '../models/models_userProfileModel.dart';
 import 'sign_in_screen.dart';
+import '../admin/admin_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -90,6 +91,9 @@ class ProfileScreen extends StatelessWidget {
                 // Tên hiển thị người dùng (Màu trắng chính)
                 Text(profile.username, style: const TextStyle(color: AppColors.textWhite, fontSize: 22, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
+                // DÒNG DEBUG: Hiển thị trực tiếp Role nhận được từ Supabase
+                Text('Role hiện tại: ${profile.Role}', style: const TextStyle(color: Colors.amber, fontSize: 14, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
                 // Ngày tham gia (Màu xám mờ đồng bộ cấu hình)
                 Text('Thành viên từ: ${profile.createdAt.day}/${profile.createdAt.month}/${profile.createdAt.year}', style: const TextStyle(color: AppColors.textGrey, fontSize: 13)),
 
@@ -114,6 +118,32 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 45),
+
+                // NÚT CÀI ĐẶT DÀNH RIÊNG CHO ADMIN
+                if (profile.Role.toLowerCase() == 'admin') ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminScreen()));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.button,
+                        minimumSize: const Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.admin_panel_settings, color: Colors.white, size: 18),
+                          SizedBox(width: 8),
+                          Text("Cài Đặt Quản Trị", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
 
                 // Nút Đăng Xuất tinh giản
                 Padding(

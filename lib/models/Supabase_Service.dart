@@ -1,4 +1,6 @@
 
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/models_music.dart';
 import '../models/models_userProfileModel.dart';
@@ -213,6 +215,7 @@ class SupabaseService {
 
 
 
+
 //các logic chức năng playlist
 // 1. Luồng lắng nghe danh sách Playlist của User đang đăng nhập thời gian thực
   Stream<List<PlaylistModel>> getMyPlaylistsStream() {
@@ -293,6 +296,26 @@ class SupabaseService {
       return null; // Xóa thành công, không trả về lỗi
     } catch (e) {
       return e.toString();
+    }
+  }
+
+
+  
+  
+  // 4. Upload file lên Supabase Storage (hỗ trợ cả Web và Mobile)
+  Future<String?> uploadFileToStorage(String bucketName, String path, {File? file, Uint8List? fileBytes}) async {
+    try {
+      if (fileBytes != null) {
+        await _supabase.storage.from(bucketName).uploadBinary(path, fileBytes);
+      } else if (file != null) {
+        await _supabase.storage.from(bucketName).upload(path, file);
+      } else {
+        return null;
+      }
+      return _supabase.storage.from(bucketName).getPublicUrl(path);
+    } catch (e) {
+      print("Lỗi upload file: $e");
+      return null;
     }
   }
 
