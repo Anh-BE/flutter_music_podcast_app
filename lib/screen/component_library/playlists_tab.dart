@@ -59,6 +59,41 @@ class PlaylistsTab extends StatelessWidget {
     );
   }
 
+  // Hàm hiển thị Dialog xác nhận xóa Playlist
+  void _showDeletePlaylistDialog(BuildContext context, PlaylistModel playlist) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF2C2C2C),
+          title: const Text("Xóa Playlist?", style: TextStyle(color: Colors.white)),
+          content: Text("Bạn có chắc chắn muốn xóa hoàn toàn danh sách phát '${playlist.name}' không? Hành động này không thể hoàn tác.", style: const TextStyle(color: Colors.white70)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Hủy", style: TextStyle(color: Colors.white54)),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context); // Đóng Dialog
+                final error = await _service.deletePlaylist(playlist.id);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(error ?? "Đã xóa playlist '${playlist.name}' thành công!"),
+                      backgroundColor: error != null ? Colors.redAccent : Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: const Text("Xóa", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<PlaylistModel>>(
@@ -78,7 +113,8 @@ class PlaylistsTab extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.8,
+            childAspectRatio: 0.78,
+
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
           ),
@@ -143,6 +179,21 @@ class PlaylistsTab extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
+                  // nút xóa Playlist
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+
+                      IconButton(
+                        constraints: const BoxConstraints(), // Thu nhỏ vùng đệm IconButton
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(Icons.delete_outline_rounded, color: Colors.white38, size: 20),
+                        onPressed: () {
+                          _showDeletePlaylistDialog(context, playlistItem);
+                        },
+                      ),
+                    ],
+                  ),
                   Text(
                     playlistItem.name,
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),

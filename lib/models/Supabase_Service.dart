@@ -299,6 +299,21 @@ class SupabaseService {
     }
   }
 
+  // Hàm xóa hoàn toàn một Playlist dựa trên playlistId
+  Future<String?> deletePlaylist(int playlistId) async {
+    try {
+      // Do database đã cài `on delete cascade` nên khi xóa playlist,
+      // các bài hát liên kết trong bảng `playlist_songs` cũng sẽ tự động biến mất theo.
+      await _supabase
+          .from('playlists')
+          .delete()
+          .eq('id', playlistId);
+      return null; // Trả về null tức là xóa thành công
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
 
   
   
