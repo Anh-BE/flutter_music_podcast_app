@@ -3,6 +3,8 @@ import '../models/Supabase_Service.dart';
 import '../colors/app_colors.dart';
 import '../models/models_music.dart';
 import 'manage_songs_screen.dart';
+import 'manage_podcards_screen.dart';
+import 'manage_albums_screen.dart';
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
@@ -38,21 +40,17 @@ class AdminScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-            // --- 4 ROW QUẢN LÝ ---
+            // --- 3 ROW QUẢN LÝ ---
             _buildManageRow(context, 'Quản lý Bài hát', Icons.music_note_rounded, () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const ManageSongsScreen()));
             }),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             _buildManageRow(context, 'Quản lý Album', Icons.album_rounded, () {
-              // TODO: Chuyển hướng sang trang Quản lý Album
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const ManageAlbumsScreen()));
             }),
-            const SizedBox(height: 12),
-            _buildManageRow(context, 'Quản lý Người dùng', Icons.people_alt_rounded, () {
-              // TODO: Chuyển hướng sang trang Quản lý Người dùng
-            }),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             _buildManageRow(context, 'Quản lý PodCard', Icons.podcasts_rounded, () {
-              // TODO: Chuyển hướng sang trang Quản lý PodCard
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const ManagePodcardsScreen()));
             }),
 
             const SizedBox(height: 40),

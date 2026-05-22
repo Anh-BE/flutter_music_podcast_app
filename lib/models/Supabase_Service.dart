@@ -213,8 +213,60 @@ class SupabaseService {
     await _supabase.from('songs').update(updates).eq('id', id);
   }
 
+  // --- CÁC HÀM DÀNH CHO ADMIN (CRUD PODCARD) ---
+
+  // 1. Thêm Podcard
+  Future<void> addPodcard({
+    required String title,
+    required String author,
+    required String imagePodcardUrl,
+    required String linkPodcardUrl,
+    required int duration,
+  }) async {
+    await _supabase.from('podcards').insert({
+      'title': title,
+      'author': author,
+      'image_podcard_URL': imagePodcardUrl,
+      'link_podcard_URL': linkPodcardUrl,
+      'duration': duration,
+    });
+  }
+
+  // 2. Xóa Podcard
+  Future<void> deletePodcard(int id) async {
+    await _supabase.from('podcards').delete().eq('id', id);
+  }
+
+  // 3. Cập nhật Podcard
+  Future<void> updatePodcard(int id, Map<String, dynamic> updates) async {
+    await _supabase.from('podcards').update(updates).eq('id', id);
+  }
 
 
+  // --- CÁC HÀM DÀNH CHO ADMIN (CRUD ALBUM) ---
+
+  // 1. Thêm Album
+  Future<void> addAlbum({
+    required String title,
+    required String artistAlbum,
+    required String imageUrlAlbum,
+  }) async {
+    await _supabase.from('albums').insert({
+      'title': title,
+      'artist_album': artistAlbum,
+      'imageURl_album': imageUrlAlbum,
+    });
+  }
+
+  // 2. Xóa Album
+  Future<void> deleteAlbum(int id) async {
+    await _supabase.from('albums').delete().eq('id', id);
+  }
+
+  // 3. Cập nhật Album
+  Future<void> updateAlbum(int id, Map<String, dynamic> updates) async {
+    await _supabase.from('albums').update(updates).eq('id', id);
+  }
 
 //các logic chức năng playlist
 // 1. Luồng lắng nghe danh sách Playlist của User đang đăng nhập thời gian thực
