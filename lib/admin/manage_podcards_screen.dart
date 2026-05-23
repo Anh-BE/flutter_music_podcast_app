@@ -3,7 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '../models/Supabase_Service.dart';
 import '../models/models_music.dart';
-import '../colors/app_colors.dart'; // Tuỳ vào thư mục chứa file app_colors của bạn
+import '../colors/app_colors.dart';
 
 class ManagePodcardsScreen extends StatefulWidget {
   const ManagePodcardsScreen({super.key});
@@ -15,7 +15,6 @@ class ManagePodcardsScreen extends StatefulWidget {
 class _ManagePodcardsScreenState extends State<ManagePodcardsScreen> {
   final SupabaseService _supabaseService = SupabaseService();
 
-  // Hàm hiển thị hộp thoại xác nhận XÓA
   void _confirmDelete(BuildContext context, PodCardModel podcast) {
     showDialog(
       context: context,
@@ -31,7 +30,7 @@ class _ManagePodcardsScreenState extends State<ManagePodcardsScreen> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
             onPressed: () async {
-              Navigator.pop(context); // Đóng hộp thoại
+              Navigator.pop(context);
               try {
                 await _supabaseService.deletePodcard(podcast.id);
                 if (mounted) {
@@ -54,7 +53,6 @@ class _ManagePodcardsScreenState extends State<ManagePodcardsScreen> {
     );
   }
 
-  // Hàm hiển thị FORM Thêm hoặc Cập nhật
   void _showPodcastForm({PodCardModel? podcast}) {
     showDialog(
       context: context,
@@ -124,12 +122,10 @@ class _ManagePodcardsScreenState extends State<ManagePodcardsScreen> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Nút Sửa
                         IconButton(
                           icon: const Icon(Icons.edit_rounded, color: Colors.white70),
                           onPressed: () => _showPodcastForm(podcast: podcast),
                         ),
-                        // Nút Xóa
                         IconButton(
                           icon: const Icon(Icons.delete_rounded, color: Colors.redAccent),
                           onPressed: () => _confirmDelete(context, podcast),
@@ -143,19 +139,15 @@ class _ManagePodcardsScreenState extends State<ManagePodcardsScreen> {
           },
         ),
       ),
-      // Nút Thêm mới góc dưới màn hình
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
-        onPressed: () => _showPodcastForm(), // Truyền null báo hiệu là Thêm mới
+        onPressed: () => _showPodcastForm(),
         child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
     );
   }
 }
 
-// ==============================================================
-// COMPONENT FORM THÊM / CẬP NHẬT PODCAST
-// ==============================================================
 class PodcastFormDialog extends StatefulWidget {
   final PodCardModel? podcast;
   final SupabaseService supabaseService;
@@ -232,7 +224,6 @@ class _PodcastFormDialogState extends State<PodcastFormDialog> {
       String audioUrl = _audioUrlController.text.trim();
       final duration = int.tryParse(_durationController.text.trim()) ?? 0;
 
-      // 1. Upload ảnh nếu có chọn file
       if (_imageFile != null) {
         final fileName = 'images/pod_${DateTime.now().millisecondsSinceEpoch}_${_imageFile!.name}';
         final uploadedUrl = await widget.supabaseService.uploadFileToStorage(
@@ -247,7 +238,6 @@ class _PodcastFormDialogState extends State<PodcastFormDialog> {
         }
       }
 
-      // 2. Upload audio nếu có chọn file
       if (_audioFile != null) {
         final fileName = 'audio/pod_${DateTime.now().millisecondsSinceEpoch}_${_audioFile!.name}';
         final uploadedUrl = await widget.supabaseService.uploadFileToStorage(
@@ -377,7 +367,7 @@ class _PodcastFormDialogState extends State<PodcastFormDialog> {
           ),
           const SizedBox(width: 8),
           Container(
-            height: 55, // Cân đối độ cao nút với TextField
+            height: 55,
             width: 55,
             decoration: BoxDecoration(
               color: AppColors.primary,

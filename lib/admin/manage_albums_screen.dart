@@ -15,7 +15,6 @@ class ManageAlbumsScreen extends StatefulWidget {
 class _ManageAlbumsScreenState extends State<ManageAlbumsScreen> {
   final SupabaseService _supabaseService = SupabaseService();
 
-  // Hàm hiển thị hộp thoại xác nhận XÓA
   void _confirmDelete(BuildContext context, AlbumModel album) {
     showDialog(
       context: context,
@@ -31,7 +30,7 @@ class _ManageAlbumsScreenState extends State<ManageAlbumsScreen> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
             onPressed: () async {
-              Navigator.pop(context); // Đóng hộp thoại
+              Navigator.pop(context);
               try {
                 await _supabaseService.deleteAlbum(album.id);
                 if (mounted) {
@@ -54,7 +53,6 @@ class _ManageAlbumsScreenState extends State<ManageAlbumsScreen> {
     );
   }
 
-  // Hàm hiển thị FORM Thêm hoặc Cập nhật
   void _showAlbumForm({AlbumModel? album}) {
     showDialog(
       context: context,
@@ -124,12 +122,10 @@ class _ManageAlbumsScreenState extends State<ManageAlbumsScreen> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Nút Sửa
                         IconButton(
                           icon: const Icon(Icons.edit_rounded, color: Colors.white70),
                           onPressed: () => _showAlbumForm(album: album),
                         ),
-                        // Nút Xóa
                         IconButton(
                           icon: const Icon(Icons.delete_rounded, color: Colors.redAccent),
                           onPressed: () => _confirmDelete(context, album),
@@ -143,19 +139,15 @@ class _ManageAlbumsScreenState extends State<ManageAlbumsScreen> {
           },
         ),
       ),
-      // Nút Thêm mới góc dưới màn hình
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
-        onPressed: () => _showAlbumForm(), // Truyền null báo hiệu là Thêm mới
+        onPressed: () => _showAlbumForm(),
         child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
     );
   }
 }
 
-// ==============================================================
-// COMPONENT FORM THÊM / CẬP NHẬT ALBUM
-// ==============================================================
 class AlbumFormDialog extends StatefulWidget {
   final AlbumModel? album;
   final SupabaseService supabaseService;
@@ -213,7 +205,6 @@ class _AlbumFormDialogState extends State<AlbumFormDialog> {
       final artist = _artistController.text.trim();
       String imageUrl = _imageUrlController.text.trim();
 
-      // Upload ảnh nếu có chọn file
       if (_imageFile != null) {
         final fileName = 'images/album_${DateTime.now().millisecondsSinceEpoch}_${_imageFile!.name}';
         final uploadedUrl = await widget.supabaseService.uploadFileToStorage(
@@ -336,7 +327,7 @@ class _AlbumFormDialogState extends State<AlbumFormDialog> {
           ),
           const SizedBox(width: 8),
           Container(
-            height: 55, // Cân đối độ cao nút với TextField
+            height: 55,
             width: 55,
             decoration: BoxDecoration(
               color: AppColors.primary,

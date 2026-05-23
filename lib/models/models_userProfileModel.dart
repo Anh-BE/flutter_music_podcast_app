@@ -13,7 +13,6 @@ class UserProfileModel {
     required this.createdAt,
   });
 
-  // Ánh xạ dữ liệu bản ghi từ Supabase (Map) sang đối tượng trong Flutter
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
     return UserProfileModel(
       id: json['id'] as String,

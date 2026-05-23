@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'list_songs_screen .dart'; // Đã xóa khoảng trắng thừa ở đây
+import 'list_songs_screen .dart';
 import 'search_screen.dart';
 import 'list_podcards_screen.dart';
 import '../screen/profile_screen.dart';
@@ -21,16 +21,14 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  // GIẢI PHÁP: Sử dụng hàm buildBody để lười tải (Lazy Loading)
-  // Chỉ khi bấm vào Tab nào, Flutter mới nhảy vào file đó để dịch và chạy.
   Widget _buildBody(int index) {
     switch (index) {
       case 0:
-        return ListSongsScreen(); // Chỉ load khi chọn "Trang chủ"
+        return ListSongsScreen();
       case 1:
-        return const SearchScreen(); // Chỉ load khi chọn "Tìm kiếm"
+        return const SearchScreen();
       case 2:
-        return ListPodcastScreen(); // Chỉ load khi chọn "PodCards" (Đã sửa đúng tên Class)
+        return ListPodcastScreen();
       case 3:
         return ProfileScreen();
       case 4:
@@ -45,22 +43,16 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       
-      // Sử dụng Column ở body để xếp chồng: Màn hình chính -> Thanh phát nhạc -> Menu dưới
       body: Column(
         children: [
-          // 1. Giao diện chính của Tab chiếm hết khoảng trống còn lại
           Expanded(
-            child: _buildBody(_selectedIndex), // Thay mảng cũ bằng hàm _buildBody ở đây
+            child: _buildBody(_selectedIndex),
           ),
-          
-          // 2. NƠI ĐẶT MINI-PLAYER (Thanh bài hát/podcast đang phát giống Spotify)
-          
         ],
       ),
 
-      // 3. Thanh điều hướng dưới cùng được bọc trong SafeArea
       bottomNavigationBar: SafeArea(
-        top: false, // Chỉ cần bảo vệ vùng đáy (bottom)
+        top: false,
         child: BottomNavigationBar(
           backgroundColor: const Color(0xFF181818),
           selectedItemColor: const Color(0xFF7B1E9D),
@@ -69,7 +61,7 @@ class _MainScreenState extends State<MainScreen> {
           onTap: _onItemTapped,
           type: BottomNavigationBarType.fixed,
           showUnselectedLabels: true,
-          elevation: 0, // Tắt bóng mặc định nếu muốn tiệp màu hoàn toàn
+          elevation: 0,
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Trang chủ'),
             BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Tìm kiếm'),

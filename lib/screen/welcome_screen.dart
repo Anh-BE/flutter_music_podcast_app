@@ -32,12 +32,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
             child: Column(
-              //mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 
-                
-                // Phần Logo và Tên App (Xếp ngang)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -68,7 +65,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 
              
                 const SizedBox(height : 20),
-                // Phần Tiêu đề và Mô tả
                 const Text(
                   "Your Music,\nEverywhere",
                   textAlign: TextAlign.center,
@@ -95,9 +91,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start, 
                   children: [
-                    // Cụm Icon Music + Text
                     SizedBox(
-                      width: 145, // Cố định chiều rộng để các icon cân bằng nhau
+                      width: 145,
                       child: Column(
                         children: [
                         Container(
@@ -136,7 +131,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   const SizedBox(width: 20),
                     SizedBox(
-                    width: 145,
+                      width: 145,
                       child: Column(
                         children: [
                         Container(
@@ -170,22 +165,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             
                           ),
                         ),
-                        // Sau này bạn có thể thêm một thẻ Text() vào đây tương tự như bên trên
                       ],
                     
                       ),
                     ),
                   ],
                 ),
-                /// 2 nut ngang con lai 
                 const SizedBox(height : 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start, // Giúp các icon luôn canh bằng nhau ở mép trên
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Cụm Icon trai tim 
                     SizedBox(
-                      width: 145, // Cố định chiều rộng
+                      width: 145,
                       child: Column(
                         children: [
                         Container(
@@ -270,7 +262,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 
                 const Spacer(),
                
-                // Nút Bắt đầu (Get Started)
                 SizedBox(
                   width: double.infinity,
                   height: 56,

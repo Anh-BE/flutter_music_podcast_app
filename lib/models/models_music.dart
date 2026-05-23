@@ -41,7 +41,6 @@ class AlbumModel {
     required this.imageUrlAlbum,
   });
 
-  // Hàm chuyển đổi từ JSON (Supabase trả về) sang Object trong Flutter
   factory AlbumModel.fromJson(Map<String, dynamic> json) {
     return AlbumModel(
       id: json['id'] as int,

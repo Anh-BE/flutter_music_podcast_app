@@ -9,7 +9,6 @@ class PlaylistsTab extends StatelessWidget {
   static final SupabaseService _service = SupabaseService();
   const PlaylistsTab({super.key});
 
-  // Hàm hiển thị ô nhập tên để tạo nhanh Playlist trống
   void _showCreatePlaylistDialog(BuildContext context) {
     final textController = TextEditingController();
 
@@ -59,7 +58,6 @@ class PlaylistsTab extends StatelessWidget {
     );
   }
 
-  // Hàm hiển thị Dialog xác nhận xóa Playlist
   void _showDeletePlaylistDialog(BuildContext context, PlaylistModel playlist) {
     showDialog(
       context: context,
@@ -75,7 +73,7 @@ class PlaylistsTab extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                Navigator.pop(context); // Đóng Dialog
+                Navigator.pop(context);
                 final error = await _service.deletePlaylist(playlist.id);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -105,10 +103,8 @@ class PlaylistsTab extends StatelessWidget {
           );
         }
 
-        // Lấy danh sách playlist từ snapshot (nếu chưa có dữ liệu thì gán mảng rỗng)
         final playlists = snapshot.data ?? [];
 
-        // Trả về GridView chuẩn cấu trúc nằm bên trong khối builder của StreamBuilder
         return GridView.builder(
           padding: const EdgeInsets.all(16.0),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -120,7 +116,6 @@ class PlaylistsTab extends StatelessWidget {
           ),
           itemCount: 1 + playlists.length,
           itemBuilder: (context, index) {
-            // Ô index == 0: Ô chức năng tạo Playlist mới
             if (index == 0) {
               return GestureDetector(
                 onTap: () {
@@ -150,12 +145,10 @@ class PlaylistsTab extends StatelessWidget {
               );
             }
 
-            // Các ô index > 0: Hiển thị các Playlist lấy từ Database Supabase về
             final playlistItem = playlists[index - 1];
 
             return GestureDetector(
               onTap: () {
-                // 🔥 CHUYỂN HƯỚNG SANG MÀN HÌNH CHI TIẾT PLAYLIST ĐỂ XEM VÀ XÓA BÀI HÁT
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -179,13 +172,12 @@ class PlaylistsTab extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  // nút xóa Playlist
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
 
                       IconButton(
-                        constraints: const BoxConstraints(), // Thu nhỏ vùng đệm IconButton
+                        constraints: const BoxConstraints(),
                         padding: EdgeInsets.zero,
                         icon: const Icon(Icons.delete_outline_rounded, color: Colors.white38, size: 20),
                         onPressed: () {

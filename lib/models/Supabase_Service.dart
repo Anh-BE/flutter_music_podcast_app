@@ -28,15 +28,12 @@ class SupabaseService {
 
   Stream<List<BaiHatModel>> getSongsByAlbumIdStream(int albumId) {
   return _supabase
-      .from('songs') // Truy vấn bảng bài hát
+      .from('songs')
       .stream(primaryKey: ['id'])
-      .eq('album_id', albumId) // 💡 Lọc: Cột 'album_id' trong DB phải bằng với 'albumId' truyền vào
+      .eq('album_id', albumId)
       .order('id')
       .map((data) => data.map((json) => BaiHatModel.fromMap(json)).toList());
 }
-
-
-
 
   Future<String?> signUpWithEmail({
     required String email,
@@ -47,20 +44,18 @@ class SupabaseService {
       final authResponse = await _supabase.auth.signUp(
         email: email,
         password: password,
-        // Đẩy tên người dùng vào dữ liệu siêu dữ liệu (metadata) để trigger tự bắt lấy
         data: {'username': username},
       );
 
       if (authResponse.user != null) {
-        return null; // Thành công, không có lỗi
+        return null;
       }
       return 'Đăng ký thất bại, vui lòng thử lại';
     } catch (e) {
-      return e.toString(); // Trả về chuỗi thông báo lỗi
+      return e.toString();
     }
   }
 
-  // 2. Logic Đăng nhập hệ thống
   Future<String?> signInWithEmail({
     required String email,
     required String password,
@@ -71,7 +66,7 @@ class SupabaseService {
         password: password,
       );
       if (response.user != null) {
-        return null; // Đăng nhập thành công
+        return null;
       }
       return 'Sai tài khoản hoặc mật khẩu';
     } catch (e) {
@@ -79,12 +74,10 @@ class SupabaseService {
     }
   }
 
-  // 3. Logic Đăng xuất
   Future<void> signOut() async {
     await _supabase.auth.signOut();
   }
 
-  // 4. Luồng dữ liệu (Stream) lắng nghe thông tin tài khoản hiện tại
   Stream<UserProfileModel?> get currentUserProfileStream {
     final user = _supabase.auth.currentUser;
     if (user == null) return Stream.value(null);
@@ -107,16 +100,14 @@ class SupabaseService {
 
   }
 
-//logic yêu thích bài hát
-// Lấy ID của người dùng hiện tại đang đăng nhập hệ thống
   String? get currentUserId => _supabase.auth.currentUser?.id;
-  // 1. Kiểm tra xem bài hát cụ thể này đã được User này thích chưa
+
   Future<bool> isSongLiked(dynamic songId) async {
     final userId = currentUserId;
     if (userId == null) return false;
 
     try {
-      final response = await _supabase // Hết báo lỗi undefined
+      final response = await _supabase
           .from('liked_songs')
           .select()
           .eq('user_id', userId)
@@ -130,7 +121,6 @@ class SupabaseService {
     }
   }
 
-// 2. Xử lý Bấm Tim
   Future<bool> toggleLikeSong(dynamic songId) async {
     final userId = currentUserId;
     if (userId == null) throw Exception("Vui lòng đăng nhập để thực hiện chức năng này");
@@ -139,14 +129,14 @@ class SupabaseService {
 
     try {
       if (isLiked) {
-        await _supabase // Hết báo lỗi undefined
+        await _supabase
             .from('liked_songs')
             .delete()
             .eq('user_id', userId)
             .eq('song_id', songId);
         return false;
       } else {
-        await _supabase.from('liked_songs').insert({ // Hết báo lỗi undefined
+        await _supabase.from('liked_songs').insert({
           'user_id': userId,
           'song_id': songId,
         });
@@ -157,13 +147,13 @@ class SupabaseService {
       rethrow;
     }
   }
-  // 3. Lấy thông tin Profile kèm toàn bộ danh sách chi tiết bài hát đã thích
+
   Future<Map<String, dynamic>?> getProfileWithLikedSongs() async {
     final userId = currentUserId;
     if (userId == null) return null;
 
     try {
-      final response = await _supabase // Hết báo lỗi undefined
+      final response = await _supabase
           .from('profiles')
           .select('''
             id,
@@ -184,13 +174,6 @@ class SupabaseService {
     }
   }
 
-
-
-
-
-  // --- CÁC HÀM DÀNH CHO ADMIN (CRUD BÀI HÁT) ---
-
-  // 1. Thêm bài hát
   Future<void> addSong({required String title, required String artist, required String imageUrl, required String audioUrl, int? albumId, required int duration}) async {
     await _supabase.from('songs').insert({
       'title': title,
@@ -202,20 +185,14 @@ class SupabaseService {
     });
   }
 
-  // 2. Xóa bài hát
   Future<void> deleteSong(int id) async {
     await _supabase.from('songs').delete().eq('id', id);
   }
 
-  // 3. Cập nhật bài hát
   Future<void> updateSong(int id, Map<String, dynamic> updates) async {
-    // Ví dụ updates: {'title': 'Tên mới', 'artist': 'Ca sĩ mới'}
     await _supabase.from('songs').update(updates).eq('id', id);
   }
 
-  // --- CÁC HÀM DÀNH CHO ADMIN (CRUD PODCARD) ---
-
-  // 1. Thêm Podcard
   Future<void> addPodcard({
     required String title,
     required String author,
@@ -232,20 +209,14 @@ class SupabaseService {
     });
   }
 
-  // 2. Xóa Podcard
   Future<void> deletePodcard(int id) async {
     await _supabase.from('podcards').delete().eq('id', id);
   }
 
-  // 3. Cập nhật Podcard
   Future<void> updatePodcard(int id, Map<String, dynamic> updates) async {
     await _supabase.from('podcards').update(updates).eq('id', id);
   }
 
-
-  // --- CÁC HÀM DÀNH CHO ADMIN (CRUD ALBUM) ---
-
-  // 1. Thêm Album
   Future<void> addAlbum({
     required String title,
     required String artistAlbum,
@@ -258,18 +229,14 @@ class SupabaseService {
     });
   }
 
-  // 2. Xóa Album
   Future<void> deleteAlbum(int id) async {
     await _supabase.from('albums').delete().eq('id', id);
   }
 
-  // 3. Cập nhật Album
   Future<void> updateAlbum(int id, Map<String, dynamic> updates) async {
     await _supabase.from('albums').update(updates).eq('id', id);
   }
 
-//các logic chức năng playlist
-// 1. Luồng lắng nghe danh sách Playlist của User đang đăng nhập thời gian thực
   Stream<List<PlaylistModel>> getMyPlaylistsStream() {
     final user = _supabase.auth.currentUser;
     if (user == null) return Stream.value([]);
@@ -282,7 +249,6 @@ class SupabaseService {
         .map((data) => data.map((json) => PlaylistModel.fromJson(json)).toList());
   }
 
-  // 2. Hàm tạo một Playlist trống mới
   Future<String?> createPlaylist(String name) async {
     try {
       final user = _supabase.auth.currentUser;
@@ -292,13 +258,12 @@ class SupabaseService {
         'name': name,
         'user_id': user.id,
       });
-      return null; // Trả về null tức là thành công
+      return null;
     } catch (e) {
       return e.toString();
     }
   }
 
-  // 3. Hàm chèn bài hát được chọn vào Playlist chỉ định
   Future<String?> addSongToPlaylist({required int playlistId, required int songId}) async {
     try {
       await _supabase.from('playlist_songs').insert({
@@ -314,20 +279,17 @@ class SupabaseService {
     }
   }
 
-// Lấy danh sách bài hát thuộc một Playlist cụ thể dựa vào playlistId
   Future<List<BaiHatModel>> getSongsInPlaylist(int playlistId) async {
     try {
-      // Thực hiện Join từ bảng playlist_songs sang bảng songs để lấy thông tin bài hát
       final response = await _supabase
           .from('playlist_songs')
-          .select('songs (*)') // Lấy tất cả các cột thuộc bảng songs liên kết
+          .select('songs (*)')
           .eq('playlist_id', playlistId);
 
       if (response == null) return [];
 
       final data = response as List<dynamic>;
 
-      // Ánh xạ dữ liệu trả về thành danh sách BaiHatModel
       return data.map((item) {
         final songData = item['songs'] as Map<String, dynamic>;
         return BaiHatModel.fromMap(songData);
@@ -337,7 +299,7 @@ class SupabaseService {
       return [];
     }
   }
-  // Hàm xóa một bài hát ra khỏi playlist dựa vào playlist_id và song_id
+
   Future<String?> removeSongFromPlaylist({required int playlistId, required int songId}) async {
     try {
       await _supabase
@@ -345,31 +307,24 @@ class SupabaseService {
           .delete()
           .eq('playlist_id', playlistId)
           .eq('song_id', songId);
-      return null; // Xóa thành công, không trả về lỗi
+      return null;
     } catch (e) {
       return e.toString();
     }
   }
 
-  // Hàm xóa hoàn toàn một Playlist dựa trên playlistId
   Future<String?> deletePlaylist(int playlistId) async {
     try {
-      // Do database đã cài `on delete cascade` nên khi xóa playlist,
-      // các bài hát liên kết trong bảng `playlist_songs` cũng sẽ tự động biến mất theo.
       await _supabase
           .from('playlists')
           .delete()
           .eq('id', playlistId);
-      return null; // Trả về null tức là xóa thành công
+      return null;
     } catch (e) {
       return e.toString();
     }
   }
 
-
-  
-  
-  // 4. Upload file lên Supabase Storage (hỗ trợ cả Web và Mobile)
   Future<String?> uploadFileToStorage(String bucketName, String path, {File? file, Uint8List? fileBytes}) async {
     try {
       if (fileBytes != null) {

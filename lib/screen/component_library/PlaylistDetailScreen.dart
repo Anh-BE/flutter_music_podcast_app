@@ -22,7 +22,6 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
     _loadPlaylistSongs();
   }
 
-  // Hàm tải danh sách bài hát
   Future<void> _loadPlaylistSongs() async {
     setState(() => _isLoading = true);
     final songs = await _service.getSongsInPlaylist(widget.playlist.id);
@@ -32,7 +31,6 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
     });
   }
 
-  // Xử lý xóa bài hát khỏi playlist
   void _deleteSong(int songId, String songTitle) async {
     final error = await _service.removeSongFromPlaylist(
       playlistId: widget.playlist.id,
@@ -44,7 +42,6 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Đã xóa '$songTitle' khỏi playlist")),
         );
-        // Tải lại danh sách sau khi xóa thành công
         _loadPlaylistSongs();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -85,7 +82,6 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
         )
             : Column(
           children: [
-            // Nút phát tất cả bài hát trong playlist
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton.icon(
@@ -110,7 +106,6 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
                 label: const Text("PHÁT TẤT CẢ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ),
             ),
-            // Danh sách bài hát
             Expanded(
               child: ListView.builder(
                 itemCount: _songs.length,
@@ -142,7 +137,6 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
                       trailing: IconButton(
                         icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
                         onPressed: () {
-                          // Hiển thị hộp thoại xác nhận trước khi xóa
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(

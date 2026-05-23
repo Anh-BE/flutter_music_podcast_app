@@ -28,9 +28,8 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
   double _currentAnimationPosition = 0.0;
   bool _isShuffle = false;
   LoopMode _loopMode = LoopMode.off;
-  bool _isChangingSong = false; // Cờ kiểm soát tránh chuyển bài bị lặp/đụng độ
+  bool _isChangingSong = false;
 
-  // Khởi tạo các biến cho chức năng yêu thích
   final SupabaseService _supabaseService = SupabaseService();
   bool _isLiked = false;
 
@@ -43,7 +42,6 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
     _audioPlayerManager.player.playerStateStream.listen((playerState) {
       final isCompleted = playerState.processingState == ProcessingState.completed;
 
-      // Thêm điều kiện !_isChangingSong để không bị gọi next liên tục
       if (isCompleted && !_isChangingSong) {
         if (_loopMode != LoopMode.one) {
           _nextSong();
@@ -66,9 +64,8 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
     super.dispose();
   }
 
-  // Hàm quét trạng thái thích từ Supabase
   void _checkLikeStatus() async {
-    bool liked = await _supabaseService.isSongLiked(_song.id); // Giả định model của bạn dùng thuộc tính .id
+    bool liked = await _supabaseService.isSongLiked(_song.id);
     if (mounted) {
       setState(() {
         _isLiked = liked;
@@ -76,7 +73,6 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
     }
   }
 
-  // Hàm xử lý khi nhấn vào nút Tim
   void _toggleLike() async {
     try {
       bool newStatus = await _supabaseService.toggleLikeSong(_song.id);
@@ -159,13 +155,12 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                 child: SizedBox(
                   width: double.infinity,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween, // Đẩy chữ sang trái, nút trái tim sang phải
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Khối chứa chữ nằm bên trái
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min, // Giúp cột co lại vừa vặn với nội dung chữ
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
                               _song.title,
@@ -174,10 +169,10 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
-                              maxLines: 1, // Giới hạn 1 dòng nếu tên bài hát quá dài
-                              overflow: TextOverflow.ellipsis, // Hiển thị dấu ... nếu bị quá tải
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            SizedBox(height: 4), // Khoảng cách nhỏ giữa tên bài hát và ca sĩ
+                            SizedBox(height: 4),
                             Text(
                               _song.artist,
                               style: TextStyle(fontSize: 13, color: Colors.white70),
@@ -186,7 +181,6 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                         ),
                       ),
 
-                      // Nút trái tim nằm bên phải
                       IconButton(
                         onPressed: _toggleLike,
                         icon: Icon(
@@ -344,13 +338,11 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
   }
 
 
-  // Thêm async vào đầu hàm
   void _nextSong() async {
-    // Nếu danh sách trống hoặc ĐANG CHUYỂN BÀI thì không làm gì cả
     if (widget.ListBaihat.isEmpty || _isChangingSong) return;
 
     if (mounted) {
-      setState(() => _isChangingSong = true); // Khóa tiến trình chuyển bài
+      setState(() => _isChangingSong = true);
     }
 
     try {
@@ -370,12 +362,11 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
       }
     } finally {
       if (mounted) {
-        setState(() => _isChangingSong = false); // Mở khóa sau khi tải xong (dù thành công hay lỗi)
+        setState(() => _isChangingSong = false);
       }
     }
   }
 
-  // Thêm async vào đầu hàm
   void _previousSong() async {
     if (widget.ListBaihat.isEmpty || _isChangingSong) return;
 

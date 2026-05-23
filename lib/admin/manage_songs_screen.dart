@@ -16,7 +16,6 @@ class ManageSongsScreen extends StatefulWidget {
 class _ManageSongsScreenState extends State<ManageSongsScreen> {
   final SupabaseService _supabaseService = SupabaseService();
 
-  // Hàm hiển thị hộp thoại xác nhận XÓA
   void _confirmDelete(BuildContext context, BaiHatModel song) {
     showDialog(
       context: context,
@@ -32,7 +31,7 @@ class _ManageSongsScreenState extends State<ManageSongsScreen> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
             onPressed: () async {
-              Navigator.pop(context); // Đóng hộp thoại
+              Navigator.pop(context);
               try {
                 await _supabaseService.deleteSong(song.id);
                 if (mounted) {
@@ -55,7 +54,6 @@ class _ManageSongsScreenState extends State<ManageSongsScreen> {
     );
   }
 
-  // Hàm hiển thị FORM Thêm hoặc Cập nhật
   void _showSongForm({BaiHatModel? song}) {
     showDialog(
       context: context,
@@ -125,12 +123,10 @@ class _ManageSongsScreenState extends State<ManageSongsScreen> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Nút Sửa
                         IconButton(
                           icon: const Icon(Icons.edit_rounded, color: Colors.white70),
                           onPressed: () => _showSongForm(song: song),
                         ),
-                        // Nút Xóa
                         IconButton(
                           icon: const Icon(Icons.delete_rounded, color: Colors.redAccent),
                           onPressed: () => _confirmDelete(context, song),
@@ -144,19 +140,15 @@ class _ManageSongsScreenState extends State<ManageSongsScreen> {
           },
         ),
       ),
-      // Nút Thêm mới góc dưới màn hình
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
-        onPressed: () => _showSongForm(), // Truyền null báo hiệu là Thêm mới
+        onPressed: () => _showSongForm(),
         child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
     );
   }
 }
 
-// ==============================================================
-// COMPONENT FORM THÊM / CẬP NHẬT BÀI HÁT
-// ==============================================================
 class SongFormDialog extends StatefulWidget {
   final BaiHatModel? song;
   final SupabaseService supabaseService;
@@ -185,14 +177,12 @@ class _SongFormDialogState extends State<SongFormDialog> {
   @override
   void initState() {
     super.initState();
-    // Nếu có dữ liệu song truyền vào -> Form Cập nhật, ngược lại là Thêm mới
     _titleController = TextEditingController(text: widget.song?.title ?? '');
     _artistController = TextEditingController(text: widget.song?.artist ?? '');
     _imageUrlController = TextEditingController(text: widget.song?.imageURl ?? '');
     _audioUrlController = TextEditingController(text: widget.song?.audioURL ?? '');
     _durationController = TextEditingController(text: widget.song != null ? widget.song!.duration.inSeconds.toString() : '');
-    // Giả sử có album -> không có thì để trống
-    _albumIdController = TextEditingController(text: ''); 
+    _albumIdController = TextEditingController(text: '');
   }
 
   @override
@@ -211,7 +201,7 @@ class _SongFormDialogState extends State<SongFormDialog> {
     if (result != null) {
       setState(() {
         _imageFile = result.files.single;
-        _imageUrlController.text = _imageFile!.name; // Hiển thị tạm tên file lên màn hình
+        _imageUrlController.text = _imageFile!.name;
       });
     }
   }
@@ -221,7 +211,7 @@ class _SongFormDialogState extends State<SongFormDialog> {
     if (result != null) {
       setState(() {
         _audioFile = result.files.single;
-        _audioUrlController.text = _audioFile!.name; // Hiển thị tạm tên file lên màn hình
+        _audioUrlController.text = _audioFile!.name;
       });
     }
   }
@@ -237,12 +227,10 @@ class _SongFormDialogState extends State<SongFormDialog> {
       String imageUrl = _imageUrlController.text.trim();
       String audioUrl = _audioUrlController.text.trim();
       final duration = int.tryParse(_durationController.text.trim()) ?? 0;
-      final albumId = int.tryParse(_albumIdController.text.trim()); // Có thể null
+      final albumId = int.tryParse(_albumIdController.text.trim());
 
-      // 1. Upload ảnh nếu có chọn file
       if (_imageFile != null) {
         final fileName = 'images/${DateTime.now().millisecondsSinceEpoch}_${_imageFile!.name}';
-        // Thay 'music_files' bằng tên bucket mà bạn thiết lập trên Supabase Storage
         final uploadedUrl = await widget.supabaseService.uploadFileToStorage(
           'music_assets', fileName, 
           fileBytes: _imageFile!.bytes,
@@ -255,10 +243,8 @@ class _SongFormDialogState extends State<SongFormDialog> {
         }
       }
 
-      // 2. Upload mp3 nếu có chọn file
       if (_audioFile != null) {
         final fileName = 'audio/${DateTime.now().millisecondsSinceEpoch}_${_audioFile!.name}';
-        // Thay 'music_files' bằng tên bucket mà bạn thiết lập trên Supabase Storage
         final uploadedUrl = await widget.supabaseService.uploadFileToStorage(
           'music_assets', fileName, 
           fileBytes: _audioFile!.bytes,
@@ -272,7 +258,6 @@ class _SongFormDialogState extends State<SongFormDialog> {
       }
 
       if (widget.song == null) {
-        // Thêm mới
         await widget.supabaseService.addSong(
           title: title,
           artist: artist,
@@ -282,19 +267,18 @@ class _SongFormDialogState extends State<SongFormDialog> {
           albumId: albumId,
         );
       } else {
-        // Cập nhật
         await widget.supabaseService.updateSong(widget.song!.id, {
           'title': title,
           'artist': artist,
           'imageURl': imageUrl,
           'audioURL': audioUrl,
           'duration': duration,
-          if (albumId != null) 'album_id': albumId, // Chỉ update album nếu có nhập
+          if (albumId != null) 'album_id': albumId,
         });
       }
 
       if (mounted) {
-        Navigator.pop(context); // Đóng dialog
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(widget.song == null ? 'Thêm bài hát thành công!' : 'Cập nhật thành công!'), backgroundColor: Colors.green),
         );
@@ -391,7 +375,7 @@ class _SongFormDialogState extends State<SongFormDialog> {
           ),
           const SizedBox(width: 8),
           Container(
-            height: 55, // Cân đối độ cao nút với TextField
+            height: 55,
             width: 55,
             decoration: BoxDecoration(
               color: AppColors.primary,
