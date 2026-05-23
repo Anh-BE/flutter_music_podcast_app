@@ -28,8 +28,9 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
   double _currentAnimationPosition = 0.0;
   bool _isShuffle = false;
   LoopMode _loopMode = LoopMode.off;
-  bool _isChangingSong = false;
+  bool _isChangingSong = false; // Cờ kiểm soát tránh chuyển bài bị lặp/đụng độ
 
+  // Khởi tạo các biến cho chức năng yêu thích
   final SupabaseService _supabaseService = SupabaseService();
   bool _isLiked = false;
 
@@ -42,6 +43,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
     _audioPlayerManager.player.playerStateStream.listen((playerState) {
       final isCompleted = playerState.processingState == ProcessingState.completed;
 
+      // Thêm điều kiện !_isChangingSong để không bị gọi next liên tục
       if (isCompleted && !_isChangingSong) {
         if (_loopMode != LoopMode.one) {
           _nextSong();
@@ -64,8 +66,9 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
     super.dispose();
   }
 
+  // Hàm quét trạng thái thích từ Supabase
   void _checkLikeStatus() async {
-    bool liked = await _supabaseService.isSongLiked(_song.id);
+    bool liked = await _supabaseService.isSongLiked(_song.id); // Giả định model của bạn dùng thuộc tính .id
     if (mounted) {
       setState(() {
         _isLiked = liked;
@@ -73,6 +76,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
     }
   }
 
+  // Hàm xử lý khi nhấn vào nút Tim
   void _toggleLike() async {
     try {
       bool newStatus = await _supabaseService.toggleLikeSong(_song.id);
@@ -86,9 +90,8 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
-    final screeenwith = MediaQuery.of(context).size.width;
-
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -102,113 +105,92 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
         child: SafeArea(
           child: Column(
             children: [
+              // App Bar
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       onPressed: () => Navigator.pop(context),
-                      icon: Icon(
-                        Icons.arrow_back,
-                        size: 20,
-                        color: const Color.fromARGB(255, 216, 119, 243),
-                      ),
+                      icon: const Icon(Icons.keyboard_arrow_down, size: 30, color: Colors.white),
                     ),
-                    Text(
-                      _song.title,
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: const Color.fromARGB(255, 255, 255, 255),
-                      ),
+                    const Text(
+                      "ĐANG PHÁT BÀI HÁT",
+                      style: TextStyle(fontSize: 12, color: Colors.white70, fontWeight: FontWeight.bold),
                     ),
-
-
                     IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: Icon(
-                        Icons.more_horiz,
-                        color: const Color.fromARGB(255, 213, 127, 244),
-                      ),
+                      onPressed: () {},
+                      icon: const Icon(Icons.more_vert, color: Colors.white),
                     ),
                   ],
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 40.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.network(
-                        _song.imageURl,
-                        width: 310,
-                        height: 310,
-                        fit: BoxFit.cover,
+              
+              // Ảnh Bài hát
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      _song.imageURl,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (c, e, s) => Container(
+                        color: Colors.grey[800],
+                        child: const Icon(Icons.music_note, size: 100, color: Colors.white54),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Padding(padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              _song.title,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              _song.artist,
-                              style: TextStyle(fontSize: 13, color: Colors.white70),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      IconButton(
-                        onPressed: _toggleLike,
-                        icon: Icon(
-                          _isLiked ? Icons.favorite : Icons.favorite_border,
-                          color: _isLiked ? Colors.redAccent : Colors.white,
-                          size: 28,
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               ),
+              
+              // Thông tin bài hát
               Padding(
-                padding: EdgeInsets.only(
-                  top: 10,
-                  bottom: 10,
-                  left: 35,
-                  right: 30,
+                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _song.title,
+                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            _song.artist,
+                            style: const TextStyle(fontSize: 16, color: Colors.white70),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: _toggleLike,
+                      icon: Icon(
+                        _isLiked ? Icons.favorite : Icons.favorite_border,
+                        color: _isLiked ? Colors.redAccent : Colors.white,
+                        size: 28,
+                      ),
+                    ),
+                  ],
                 ),
+              ),
+              
+              // Thanh tiến trình
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
                 child: _progressBar(),
               ),
+              
+              // Các nút điều khiển
               Padding(
-                padding: EdgeInsets.only(
-                  top: 10,
-                  bottom: 10,
-                  left: 12,
-                  right: 12,
-                ),
+                padding: const EdgeInsets.only(bottom: 40.0, left: 16.0, right: 16.0),
                 child: _mediaButtons(),
               ),
             ],
@@ -219,42 +201,35 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
   }
 
   Widget _mediaButtons() {
-    return SizedBox(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          MediaButtonControl(
-            function: _setShuffle,
-            icon: Icons.shuffle,
-            color: _isShuffle
-                ? const Color.fromARGB(255, 216, 119, 243)
-                : const Color.fromARGB(255, 245, 244, 247),
-            size: 24,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        IconButton(
+          onPressed: _setShuffle,
+          icon: Icon(
+            Icons.shuffle,
+            color: _isShuffle ? Colors.greenAccent : Colors.white54,
+            size: 28,
           ),
-          MediaButtonControl(
-            function: _previousSong,
-            icon: Icons.skip_previous,
-            color: Color.fromARGB(255, 247, 247, 248),
-            size: 36,
+        ),
+        IconButton(
+          onPressed: _previousSong,
+          icon: const Icon(Icons.skip_previous, color: Colors.white, size: 40),
+        ),
+        _playButton(),
+        IconButton(
+          onPressed: _nextSong,
+          icon: const Icon(Icons.skip_next, color: Colors.white, size: 40),
+        ),
+        IconButton(
+          onPressed: setupRepeatOption,
+          icon: Icon(
+            _repeatingIcon(),
+            color: _loopMode != LoopMode.off ? Colors.greenAccent : Colors.white54,
+            size: 28,
           ),
-          _playButton(),
-          MediaButtonControl(
-            function: _nextSong,
-            icon: Icons.skip_next,
-            color: Color.fromARGB(255, 249, 249, 250),
-            size: 36,
-          ),
-          MediaButtonControl(
-            function: setupRepeatOption,
-            icon: _repeatingIcon(),
-            color: _loopMode != LoopMode.off
-                ? const Color.fromARGB(255, 216, 119, 243)
-                : const Color.fromARGB(255, 245, 244, 247),
-            size: 24,
-          ),
-
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -275,31 +250,22 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
             child: const CircularProgressIndicator(),
           );
         } else if (playing != true) {
-          return MediaButtonControl(
-            function: () {
-              _audioPlayerManager.player.play();
-            },
-            icon: Icons.play_arrow_sharp,
-            color: const Color.fromARGB(255, 251, 251, 250),
-            size: 48,
+          return IconButton(
+            iconSize: 64,
+            icon: const Icon(Icons.play_circle_fill, color: Colors.white),
+            onPressed: () => _audioPlayerManager.player.play(),
           );
         } else if (processingSate != ProcessingState.completed) {
-          return MediaButtonControl(
-            function: () {
-              _audioPlayerManager.player.pause();
-            },
-            icon: Icons.pause,
-            color: const Color.fromARGB(255, 251, 251, 250),
-            size: 48,
+          return IconButton(
+            iconSize: 64,
+            icon: const Icon(Icons.pause_circle_filled, color: Colors.white),
+            onPressed: () => _audioPlayerManager.player.pause(),
           );
         } else {
-          return MediaButtonControl(
-            function: () {
-              _audioPlayerManager.player.seek(Duration.zero);
-            },
-            icon: Icons.replay,
-            color: const Color.fromARGB(255, 251, 251, 250),
-            size: 48,
+          return IconButton(
+            iconSize: 64,
+            icon: const Icon(Icons.replay_circle_filled, color: Colors.white),
+            onPressed: () => _audioPlayerManager.player.seek(Duration.zero),
           );
         }
       },
@@ -323,7 +289,6 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
           baseBarColor: Colors.white24,
           bufferedBarColor: Colors.white38,
           thumbColor: Colors.white,
-
           timeLabelTextStyle: const TextStyle(color: Colors.white),
           onSeek: _audioPlayerManager.player.seek,
         );
@@ -338,11 +303,13 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
   }
 
 
+  // Thêm async vào đầu hàm
   void _nextSong() async {
+    // Nếu danh sách trống hoặc ĐANG CHUYỂN BÀI thì không làm gì cả
     if (widget.ListBaihat.isEmpty || _isChangingSong) return;
 
     if (mounted) {
-      setState(() => _isChangingSong = true);
+      setState(() => _isChangingSong = true); // Khóa tiến trình chuyển bài
     }
 
     try {
@@ -362,11 +329,12 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
       }
     } finally {
       if (mounted) {
-        setState(() => _isChangingSong = false);
+        setState(() => _isChangingSong = false); // Mở khóa sau khi tải xong (dù thành công hay lỗi)
       }
     }
   }
 
+  // Thêm async vào đầu hàm
   void _previousSong() async {
     if (widget.ListBaihat.isEmpty || _isChangingSong) return;
 

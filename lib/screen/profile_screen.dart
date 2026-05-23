@@ -15,6 +15,7 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -24,22 +25,33 @@ class ProfileScreen extends StatelessWidget {
           children: [
             Icon(Icons.music_note_rounded, color: AppColors.button, size: 22),
             SizedBox(width: 6),
-            Text('Musify Profile', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 18)),
+            Text('Musify Profile', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
           ],
         ),
         centerTitle: true,
       ),
-      body: StreamBuilder<UserProfileModel?>(
-        stream: supabaseService.currentUserProfileStream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: AppColors.primary));
-          }
-          
-          // Bắt lỗi và hiển thị nguyên nhân trực tiếp trên màn hình
-          if (snapshot.hasError) {
-            return Center(child: Text('Lỗi tải dữ liệu: ${snapshot.error}', style: const TextStyle(color: Colors.redAccent, fontSize: 16)));
-          }
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF7B1E9D), Color(0xFF121212)],
+          ),
+        ),
+        child: SafeArea(
+          child: StreamBuilder<UserProfileModel?>(
+            stream: supabaseService.currentUserProfileStream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator(color: AppColors.primary));
+              }
+              
+              // Bắt lỗi và hiển thị nguyên nhân trực tiếp trên màn hình
+              if (snapshot.hasError) {
+                return Center(child: Text('Lỗi tải dữ liệu: ${snapshot.error}', style: const TextStyle(color: Colors.redAccent, fontSize: 16)));
+              }
 
           final profile = snapshot.data;
           if (profile == null) {
@@ -176,6 +188,8 @@ class ProfileScreen extends StatelessWidget {
             },
           );
         },
+          ),
+        ),
       ),
     );
   }

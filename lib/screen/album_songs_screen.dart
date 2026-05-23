@@ -15,7 +15,7 @@ class AlbumSongsScreen extends StatelessWidget {
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
-          // Kế thừa phong cách màu nền Gradient từ ListSongsScreen
+          
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -25,14 +25,13 @@ class AlbumSongsScreen extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              expandedHeight: 320.0, // Độ cao của phần hiển thị ảnh Album
-              pinned: true,          // Giữ AppBar lại khi cuộn xuống
+              expandedHeight: 320.0, 
+              pinned: true,         
               backgroundColor: Colors.transparent,
               elevation: 0,
               iconTheme: const IconThemeData(color: Colors.white),
               flexibleSpace: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
-                  // Tính toán độ cao để biết người dùng đã cuộn qua ảnh chưa
                   final double collapsedHeight =
                       kToolbarHeight + MediaQuery.of(context).padding.top;
                   final bool isCollapsed =
@@ -41,16 +40,16 @@ class AlbumSongsScreen extends StatelessWidget {
                   return Stack(
                     fit: StackFit.expand,
                     children: [
-                      // Tạo một lớp nền solid kèm đường gạch ngang xuất hiện khi cuộn lên
+                      
                       AnimatedOpacity(
                         duration: const Duration(milliseconds: 200),
                         opacity: isCollapsed ? 1.0 : 0.0,
                         child: Container(
                           decoration: const BoxDecoration(
-                            color: Color(0xFF7B1E9D), // Màu tím khớp với nền gradient trên cùng
+                            color: Color(0xFF7B1E9D),
                             border: Border(
                               bottom: BorderSide(
-                                color: Colors.white30, // Đường kẻ mờ ngăn cách
+                                color: Colors.white30, 
                                 width: 1.0,
                               ),
                             ),
@@ -66,7 +65,7 @@ class AlbumSongsScreen extends StatelessWidget {
                       ),
                       FlexibleSpaceBar(
                         centerTitle: true,
-                        // Hiệu ứng mờ dần hiển thị tên album khi cuộn lên che ảnh
+                       
                         title: AnimatedOpacity(
                           duration: const Duration(milliseconds: 200),
                           opacity: isCollapsed ? 1.0 : 0.0,
@@ -164,7 +163,7 @@ class AlbumSongsScreen extends StatelessWidget {
                     );
                   }
 
-                  // Render danh sách bài hát giống phong cách ListSongsScreen
+                  
                   return ListView.builder(
                     padding: const EdgeInsets.only(top: 10, bottom: 50),
                     shrinkWrap: true,
